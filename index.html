@@ -550,15 +550,11 @@ async function callNaverKeywordAPI(keywords){
     naverLog(`🔀 프록시 시도 ${i+1}/${proxies.length}: ${proxy.name}`, 'log-info');
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(()=>controller.abort(), 8000);
-
-      const fetchOpts = { method:'GET', signal:controller.signal };
-      // Only attach custom headers if proxy supports forwarding them
+      const fetchOpts = { method:'GET' };
       if(proxy.headersOk) fetchOpts.headers = headers;
 
-      const res = await fetch(proxyUrl, fetchOpts);
-      clearTimeout(timeout);
+      const timeoutPromise = new Promise((_,reject) => setTimeout(()=>reject(new Error('시간 초과(8초)')), 8000));
+      const res = await Promise.race([ fetch(proxyUrl, fetchOpts), timeoutPromise ]);
 
       if(!res.ok){
         const errText = await res.text();
@@ -577,8 +573,7 @@ async function callNaverKeywordAPI(keywords){
         continue;
       }
     } catch(e){
-      const msg = e.name==='AbortError' ? '시간 초과(8초)' : e.message;
-      naverLog(`  ⚠️ ${proxy.name} 실패: ${msg}`,'log-err');
+      naverLog(`  ⚠️ ${proxy.name} 실패: ${e.message}`,'log-err');
       continue; // try next proxy
     }
   }

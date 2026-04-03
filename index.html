@@ -170,7 +170,7 @@ th.total-col{background:#fff3cd;color:#b45309}
 .btn-export:hover{background:#02b350}
 
 /* ── Naver API log ── */
-.api-log{max-height:100px;overflow-y:auto;font-size:11px;color:#666;background:#f8f8f8;border-radius:8px;padding:8px;margin-top:8px;display:none;font-family:monospace;line-height:1.6}
+.api-log{max-height:160px;overflow-y:auto;font-size:11px;color:#666;background:#f8f8f8;border-radius:8px;padding:8px;margin-top:8px;display:none;font-family:monospace;line-height:1.6}
 .api-log.show{display:block}
 .log-ok{color:#16a34a}.log-err{color:#dc2626}.log-info{color:#2563eb}
 </style>
@@ -236,6 +236,17 @@ th.total-col{background:#fff3cd;color:#b45309}
           <input type="checkbox" id="corsProxy" checked>
           <span class="proxy-slider"></span>
         </label>
+      </div>
+      <div class="proxy-row" style="margin-top:4px;background:#f0f9ff;border-color:#bae6fd">
+        <label style="color:#0369a1">
+          🔀 프록시 서버 선택
+        </label>
+        <select id="proxySelect" style="padding:4px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:11px;font-weight:600;color:#0369a1;background:#fff;cursor:pointer;outline:none">
+          <option value="auto">자동 (순차 시도)</option>
+          <option value="corsproxy">corsproxy.io</option>
+          <option value="allorigins">allorigins.win</option>
+          <option value="codetabs">codetabs.com</option>
+        </select>
       </div>
 
       <div class="config-hint">
@@ -486,13 +497,20 @@ function naverLog(msg, cls=''){
 
 function useProxy(){ return document.getElementById('corsProxy').checked; }
 
-function getProxyUrl(originalUrl){
-  if(!useProxy()) return originalUrl;
-  // Use allorigins as CORS proxy (reliable public option)
-  return `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`;
+const PROXY_LIST = [
+  { name:'corsproxy',  wrap: url => `https://corsproxy.io/?${encodeURIComponent(url)}`, headersOk:true },
+  { name:'allorigins', wrap: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, headersOk:false },
+  { name:'codetabs',   wrap: url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, headersOk:false },
+];
+
+function getSelectedProxies(){
+  const sel = document.getElementById('proxySelect').value;
+  if(sel==='auto') return [...PROXY_LIST];
+  const found = PROXY_LIST.find(p=>p.name===sel);
+  return found ? [found] : [...PROXY_LIST];
 }
 
-/* ── Naver API: Keyword Tool ── */
+/* ── Naver API: Keyword Tool (multi-proxy fallback) ── */
 async function callNaverKeywordAPI(keywords){
   const {customerId, apiKey, secretKey} = getNaverKeys();
   if(!customerId||!apiKey||!secretKey){
@@ -500,49 +518,73 @@ async function callNaverKeywordAPI(keywords){
     return null;
   }
 
-  const timestamp = String(Date.now());
   const method = 'GET';
   const uri = '/keywordstool';
-  const signature = await generateSignature(secretKey, timestamp, method, uri);
-
-  // Build query – max 5 keywords per call to stay safe
   const hintKeywords = keywords.join(',');
   const baseUrl = `https://api.searchad.naver.com${uri}?hintKeywords=${encodeURIComponent(hintKeywords)}&showDetail=1`;
 
-  const headers = {
-    'X-Timestamp': timestamp,
-    'X-API-KEY': apiKey,
-    'X-Customer': customerId,
-    'X-Signature': signature
-  };
-
-  try {
-    let res;
-    if(useProxy()){
-      // allorigins doesn't forward custom headers, so we use corsproxy.io instead
-      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(baseUrl)}`;
-      res = await fetch(proxyUrl, {
-        method: 'GET',
-        headers: headers
-      });
-    } else {
-      res = await fetch(baseUrl, {
-        method: 'GET',
-        headers: headers
-      });
-    }
-
-    if(!res.ok){
-      const errText = await res.text();
-      naverLog(`❌ API 오류 (${res.status}): ${errText.slice(0,120)}`,'log-err');
+  // Direct call (no proxy)
+  if(!useProxy()){
+    const timestamp = String(Date.now());
+    const signature = await generateSignature(secretKey, timestamp, method, uri);
+    const headers = { 'X-Timestamp':timestamp, 'X-API-KEY':apiKey, 'X-Customer':customerId, 'X-Signature':signature };
+    try {
+      const res = await fetch(baseUrl, { method:'GET', headers });
+      if(!res.ok){ naverLog(`❌ API 오류 (${res.status}): ${(await res.text()).slice(0,120)}`,'log-err'); return null; }
+      return await res.json();
+    } catch(e){
+      naverLog(`❌ 직접 호출 실패: ${e.message} → CORS 프록시를 켜보세요.`,'log-err');
       return null;
     }
-    const data = await res.json();
-    return data;
-  } catch(e){
-    naverLog(`❌ 네트워크 오류: ${e.message}. CORS 프록시를 켜/꺼 보세요.`,'log-err');
-    return null;
   }
+
+  // Proxy call – try each proxy in order
+  const proxies = getSelectedProxies();
+  for(let i=0; i<proxies.length; i++){
+    const proxy = proxies[i];
+    const timestamp = String(Date.now());
+    const signature = await generateSignature(secretKey, timestamp, method, uri);
+    const headers = { 'X-Timestamp':timestamp, 'X-API-KEY':apiKey, 'X-Customer':customerId, 'X-Signature':signature };
+    const proxyUrl = proxy.wrap(baseUrl);
+
+    naverLog(`🔀 프록시 시도 ${i+1}/${proxies.length}: ${proxy.name}`, 'log-info');
+
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(()=>controller.abort(), 8000);
+
+      const fetchOpts = { method:'GET', signal:controller.signal };
+      // Only attach custom headers if proxy supports forwarding them
+      if(proxy.headersOk) fetchOpts.headers = headers;
+
+      const res = await fetch(proxyUrl, fetchOpts);
+      clearTimeout(timeout);
+
+      if(!res.ok){
+        const errText = await res.text();
+        naverLog(`  ⚠️ ${proxy.name} 응답 오류 (${res.status}): ${errText.slice(0,80)}`,'log-err');
+        continue; // try next proxy
+      }
+
+      const data = await res.json();
+
+      // Validate it's actually Naver API data
+      if(data && (data.keywordList || Array.isArray(data))){
+        naverLog(`  ✅ ${proxy.name} 성공!`,'log-ok');
+        return data;
+      } else {
+        naverLog(`  ⚠️ ${proxy.name} 응답은 왔으나 유효한 데이터가 아님`,'log-err');
+        continue;
+      }
+    } catch(e){
+      const msg = e.name==='AbortError' ? '시간 초과(8초)' : e.message;
+      naverLog(`  ⚠️ ${proxy.name} 실패: ${msg}`,'log-err');
+      continue; // try next proxy
+    }
+  }
+
+  naverLog('❌ 모든 프록시 시도 실패. 아래 해결 방법을 확인하세요:\n   1) 네이버 API 키가 올바른지 확인\n   2) 다른 프록시 서버를 선택해서 재시도\n   3) 로컬 프록시 서버를 사용 (CORS 제한 없음)','log-err');
+  return null;
 }
 
 /* ── Batch query: split keywords into chunks of 5 ── */
@@ -631,7 +673,8 @@ async function testNaverAPI(){
   st.className='key-status';st.style.display='inline-block';st.textContent='⏳ 테스트 중...';st.style.background='#fef3c7';st.style.color='#92400e';
 
   document.getElementById('naverLog').innerHTML='';
-  naverLog('🔄 네이버 API 연결 테스트 시작 (키워드: "나이키")','log-info');
+  const proxyMode = useProxy() ? `프록시: ${document.getElementById('proxySelect').value}` : '직접 호출';
+  naverLog(`🔄 네이버 API 연결 테스트 시작 (키워드: "나이키", ${proxyMode})`, 'log-info');
 
   const data = await callNaverKeywordAPI(['나이키']);
   if(data && data.keywordList && data.keywordList.length > 0){
@@ -643,7 +686,7 @@ async function testNaverAPI(){
   } else {
     st.className='key-status err';
     st.textContent='❌ 연결 실패';
-    naverLog('❌ API 응답이 올바르지 않습니다. 키를 확인하고 CORS 프록시 설정을 변경해 보세요.','log-err');
+    naverLog('❌ 연결 실패. 위 로그에서 각 프록시별 오류를 확인하세요.','log-err');
   }
 }
 

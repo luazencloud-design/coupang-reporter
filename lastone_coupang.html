@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>라스트원 쿠팡 업데이트 추천</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f7; min-height: 100vh; padding: 24px 16px; color: #1a1a2e; }
+.container { max-width: 1040px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 22px; }
+.header h1 { font-size: 21px; font-weight: 700; color: #1a1a2e; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 4px; }
+.header p { font-size: 13px; color: #888; }
+
+.date-banner { background: linear-gradient(135deg,#1a1a2e 0%,#2d2d4e 100%); border-radius:14px; padding:18px 24px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; box-shadow:0 4px 16px rgba(26,26,46,.18); }
+.date-left { display:flex; flex-direction:column; gap:2px; }
+.date-today { font-size:12px; color:rgba(255,255,255,.55); }
+.date-main  { font-size:20px; font-weight:700; color:#fff; }
+.date-ref   { font-size:11px; color:rgba(255,255,255,.4); margin-top:2px; }
+.date-right { display:flex; gap:10px; align-items:center; }
+.badge-coupang { background:#fee500; color:#1a1a2e; font-size:12px; font-weight:700; padding:5px 14px; border-radius:20px; }
+.btn-analyze { background:#fff; color:#1a1a2e; border:none; border-radius:10px; padding:9px 20px; font-size:14px; font-weight:700; cursor:pointer; transition:all .15s; }
+.btn-analyze:hover { background:#f0f0f0; }
+.btn-analyze:disabled { background:#ccc; color:#999; cursor:not-allowed; }
+
+.status-bar { text-align:center; padding:13px; font-size:14px; color:#555; background:#fff; border-radius:10px; margin-bottom:18px; box-shadow:0 1px 6px rgba(0,0,0,.05); display:none; }
+.status-bar.show { display:block; }
+
+.summary-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+@media(max-width:700px){ .summary-row { grid-template-columns:repeat(2,1fr); } }
+.sum-card { background:#fff; border-radius:12px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:none; }
+.sum-card.show { display:block; }
+.sum-label { font-size:11px; color:#aaa; font-weight:600; margin-bottom:3px; }
+.sum-value { font-size:19px; font-weight:700; color:#1a1a2e; }
+.sum-sub { font-size:11px; color:#aaa; margin-top:2px; }
+
+.tab-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.tab-btn { padding:8px 18px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #e0e0e0; background:#fff; color:#888; transition:all .15s; }
+.tab-btn.active { background:#1a1a2e; color:#fff; border-color:#1a1a2e; }
+
+.panel { display:none; }
+.panel.active { display:block; }
+
+.card-wrap { background:#fff; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.07); overflow-x:auto; }
+.card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px; }
+.card-title { font-size:15px; font-weight:700; color:#1a1a2e; }
+.period-tag { font-size:11px; font-weight:600; padding:2px 10px; border-radius:20px; background:#fff3cd; color:#856404; }
+
+.filter-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.f-tab { padding:4px 11px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid #e8e8e8; background:#f8f8f8; color:#888; transition:all .15s; }
+.f-tab.active[data-cat="전체"]     { background:#f0f0f8; color:#1a1a2e; border-color:#1a1a2e; }
+.f-tab.active[data-cat="패션의류"]   { background:#EEF2FF; color:#4F46E5; border-color:#4F46E5; }
+.f-tab.active[data-cat="스포츠레저"] { background:#ECFDF5; color:#059669; border-color:#059669; }
+.f-tab.active[data-cat="출산육아"]   { background:#FFF7ED; color:#EA580C; border-color:#EA580C; }
+.f-tab.active[data-cat="패션잡화"]   { background:#FDF4FF; color:#9333EA; border-color:#9333EA; }
+
+table { width:100%; border-collapse:collapse; font-size:12px; min-width:640px; }
+thead tr { border-bottom:2px solid #f0f0f0; }
+th { text-align:left; padding:8px 8px; color:#aaa; font-weight:600; font-size:11px; white-space:nowrap; }
+th.r, td.r { text-align:right; }
+th.c, td.c { text-align:center; }
+tbody tr { border-bottom:1px solid #f8f8f8; transition:background .12s; }
+tbody tr:hover { background:#fafafa; }
+tbody tr.hidden { display:none; }
+td { padding:9px 8px; vertical-align:middle; }
+
+.rnum { width:22px; height:22px; border-radius:50%; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; background:#f0f0f0; color:#777; flex-shrink:0; }
+.rnum.g1{background:#FFD700;color:#7a5c00;} .rnum.g2{background:#C0C0C0;color:#333;} .rnum.g3{background:#CD7F32;color:#fff;} .rnum.hot{background:#fee2e2;color:#dc2626;}
+
+.cat-pill { font-size:9px; font-weight:700; padding:2px 7px; border-radius:8px; display:inline-block; white-space:nowrap; }
+.brand-nm { font-weight:600; color:#1a1a2e; font-size:13px; }
+.brand-reason { font-size:10px; color:#aaa; margin-top:1px; }
+
+.vol-num { font-weight:700; color:#1a1a2e; }
+.vol-bar-wrap { display:inline-block; width:60px; height:6px; background:#f0f0f0; border-radius:3px; vertical-align:middle; margin-left:5px; overflow:hidden; }
+.vol-bar { height:100%; border-radius:3px; display:block; }
+.sales-pill { font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; white-space:nowrap; }
+
+.trend-up   { color:#16a34a; font-weight:700; font-size:11px; }
+.trend-down { color:#dc2626; font-weight:700; font-size:11px; }
+.trend-flat { color:#aaa;    font-weight:700; font-size:11px; }
+
+.act-urgent    { background:#fee2e2; color:#dc2626; font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap; display:inline-block; }
+.act-recommend { background:#dcfce7; color:#16a34a; font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap; display:inline-block; }
+.act-normal    { background:#f0f0f0; color:#888;    font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap; display:inline-block; }
+
+.cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:600px){ .cat-grid { grid-template-columns:1fr; } }
+.cat-item { background:#fff; border-radius:12px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; align-items:center; gap:12px; }
+.cat-rnum { width:28px; height:28px; border-radius:50%; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#f0f0f0; color:#777; }
+.cat-rnum.g1{background:#FFD700;color:#7a5c00;} .cat-rnum.g2{background:#C0C0C0;color:#333;} .cat-rnum.g3{background:#CD7F32;color:#fff;} .cat-rnum.hot{background:#fee2e2;color:#dc2626;}
+.cat-body { flex:1; min-width:0; }
+.cat-name { font-size:14px; font-weight:700; color:#1a1a2e; }
+.cat-stats { display:flex; gap:7px; margin-top:4px; flex-wrap:wrap; }
+.stat-chip { font-size:10px; font-weight:600; padding:2px 8px; border-radius:8px; }
+.sc-search { background:#EEF2FF; color:#4F46E5; }
+.sc-sales  { background:#ECFDF5; color:#059669; }
+.cat-reason { font-size:11px; color:#aaa; margin-top:3px; }
+
+.tip-box { background:#f8faff; border:1px solid #e0e7ff; border-radius:12px; padding:16px 18px; margin-top:18px; display:none; }
+.tip-box.show { display:block; }
+.tip-title { font-size:13px; font-weight:700; color:#3730a3; margin-bottom:10px; display:flex; align-items:center; gap:5px; }
+.tip-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+@media(max-width:500px){ .tip-grid { grid-template-columns:1fr; } }
+.tip-item { font-size:12px; color:#444; padding:8px 12px; background:#fff; border-radius:8px; border-left:3px solid #6366f1; line-height:1.5; }
+
+.footer-note { text-align:center; font-size:11px; color:#ccc; margin-top:20px; padding-bottom:4px; }
+
+.apikey-bar { background:#fff; border-radius:14px; padding:16px 20px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,.07); display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.apikey-bar label { font-size:13px; font-weight:700; color:#1a1a2e; white-space:nowrap; }
+.apikey-input { flex:1; min-width:220px; padding:8px 12px; border:1.5px solid #e0e0e0; border-radius:9px; font-size:13px; font-family:monospace; outline:none; transition:border-color .2s; color:#333; }
+.apikey-input:focus { border-color:#1a1a2e; }
+.apikey-save { background:#1a1a2e; color:#fff; border:none; border-radius:9px; padding:8px 18px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.apikey-save:hover { background:#2d2d4e; }
+.apikey-status { font-size:12px; padding:4px 10px; border-radius:8px; display:none; }
+.apikey-status.ok  { display:inline-block; background:#dcfce7; color:#16a34a; }
+.apikey-status.err { display:inline-block; background:#fee2e2; color:#dc2626; }
+.apikey-hint { font-size:11px; color:#aaa; width:100%; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>
+      <svg width="34" height="34" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#1a1a2e"/><text x="10" y="26" font-size="22" font-weight="800" fill="#fff" font-family="Arial,sans-serif">L</text></svg>
+      라스트원 쿠팡 업데이트 추천
+    </h1>
+    <p>동월 3개년(23·24·25년) 종합 데이터랩 + 쿠팡 트래픽 AI 시뮬레이션 기반 상품 업데이트 전략</p>
+  </div>
+
+  <!-- API 키 입력창 -->
+  <div class="apikey-bar" id="apikeyBar">
+    <label>🔑 Gemini API Key</label>
+    <input type="password" class="apikey-input" id="apikeyInput" placeholder="AIza..." />
+    <button class="apikey-save" onclick="saveApiKey()">저장</button>
+    <span class="apikey-status" id="apikeyStatus"></span>
+    <span class="apikey-hint">
+      API 키는 브라우저에만 저장되며 외부로 전송되지 않습니다 ·
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#6366f1;">aistudio.google.com</a>에서 무료 발급
+    </span>
+  </div>
+
+  <div class="date-banner">
+    <div class="date-left">
+      <div class="date-today">📅 분석 기준일</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+        <input type="date" id="dateInput"
+          style="background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 12px;color:#fff;font-size:15px;font-weight:600;outline:none;cursor:pointer;"
+          onchange="onDateChange()" />
+        <span style="font-size:12px;color:rgba(255,255,255,0.5);" id="weekdayDisplay"></span>
+      </div>
+      <div class="date-ref" id="refDisplay">참조: —</div>
+    </div>
+    <div class="date-right">
+      <div class="badge-coupang">🛒 쿠팡 추천</div>
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">🔍 분석하기</button>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar"></div>
+
+  <div class="summary-row">
+    <div class="sum-card" id="sc1"><div class="sum-label">참조 기간</div><div class="sum-value" id="sc1v">—</div><div class="sum-sub">23·24·25년 동월 종합</div></div>
+    <div class="sum-card" id="sc2"><div class="sum-label">이달 핵심 키워드</div><div class="sum-value" id="sc2v">—</div><div class="sum-sub" id="sc2s">시즌 트렌드</div></div>
+    <div class="sum-card" id="sc3"><div class="sum-label">검색량 1위 브랜드</div><div class="sum-value" id="sc3v">—</div><div class="sum-sub" id="sc3s">월 추정 검색수</div></div>
+    <div class="sum-card" id="sc4"><div class="sum-label">즉시 업데이트 권장</div><div class="sum-value" id="sc4v">—</div><div class="sum-sub">🔥 긴급 브랜드 수</div></div>
+  </div>
+
+  <div class="tab-nav" id="tabNav" style="display:none">
+    <button class="tab-btn active" onclick="switchTab('brand')">🏷️ 브랜드 TOP 20</button>
+    <button class="tab-btn" onclick="switchTab('category')">🛍️ 카테고리 TOP 10</button>
+  </div>
+
+  <!-- 브랜드 패널 -->
+  <div class="panel active" id="panelBrand">
+    <div class="card-wrap" id="brandWrap" style="display:none">
+      <div class="card-head">
+        <div class="card-title">🏷️ 브랜드 업데이트 우선순위 TOP 20</div>
+        <span class="period-tag" id="brandPTag"></span>
+      </div>
+      <div class="filter-tabs">
+        <span class="f-tab active" data-cat="전체"     onclick="filterBrand('전체')">전체</span>
+        <span class="f-tab" data-cat="패션의류"   onclick="filterBrand('패션의류')">👗 패션의류</span>
+        <span class="f-tab" data-cat="스포츠레저" onclick="filterBrand('스포츠레저')">🏃 스포츠레저</span>
+        <span class="f-tab" data-cat="출산육아"   onclick="filterBrand('출산육아')">👶 출산육아</span>
+        <span class="f-tab" data-cat="패션잡화"   onclick="filterBrand('패션잡화')">👜 패션잡화</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">순위</th>
+            <th>브랜드</th>
+            <th>카테고리</th>
+            <th class="r">쿠팡 월 검색량<br><span style="font-weight:400;color:#ccc;">(AI 추정)</span></th>
+            <th class="r">월 판매량<br><span style="font-weight:400;color:#ccc;">(AI 추정)</span></th>
+            <th class="c">트렌드</th>
+            <th class="c">액션</th>
+          </tr>
+        </thead>
+        <tbody id="brandTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 카테고리 패널 -->
+  <div class="panel" id="panelCategory">
+    <div id="catWrap" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:15px;font-weight:700;color:#1a1a2e;">🛍️ 카테고리 업데이트 우선순위 TOP 10</span>
+        <span class="period-tag" id="catPTag"></span>
+      </div>
+      <div class="cat-grid" id="catGridInner"></div>
+    </div>
+  </div>
+
+  <div class="tip-box" id="tipBox">
+    <div class="tip-title">💡 오늘의 쿠팡 업데이트 핵심 전략</div>
+    <div class="tip-grid" id="tipGrid"></div>
+  </div>
+
+  <div class="footer-note" id="footerNote" style="display:none">
+    라스트원 브랜드유통 · 동월 3개년(23·24·25년) 네이버 데이터랩 + 쿠팡 트래픽 AI 시뮬레이션 기반 · 실제 수치와 차이 있을 수 있습니다
+  </div>
+</div>
+
+<script>
+const WEEK_KO = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+let targetYear, targetMonth, targetDay;
+
+function initDate() {
+  const today = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  document.getElementById('dateInput').value = dateStr;
+  applyDate(today);
+}
+
+function onDateChange() {
+  const val = document.getElementById('dateInput').value;
+  if (!val) return;
+  const d = new Date(val + 'T00:00:00');
+  applyDate(d);
+}
+
+function applyDate(d) {
+  targetYear  = d.getFullYear();
+  targetMonth = d.getMonth() + 1;
+  targetDay   = d.getDate();
+  document.getElementById('weekdayDisplay').textContent = WEEK_KO[d.getDay()];
+  const y1 = targetYear - 3, y2 = targetYear - 2, y3 = targetYear - 1;
+  document.getElementById('refDisplay').textContent =
+    `참조: ${y1}·${y2}·${y3}년 ${targetMonth}월 3개년 종합 분석`;
+}
+
+initDate();
+
+// 저장된 API 키 있으면 상태 표시
+(function() {
+  const saved = localStorage.getItem('lastoneApiKey');
+  if (saved) {
+    const st = document.getElementById('apikeyStatus');
+    st.className = 'apikey-status ok';
+    st.textContent = '✅ API 키 저장됨';
+  }
+})();
+
+const CAT = {
+  '패션의류':   {bar:'#4F46E5',bg:'#EEF2FF',text:'#4F46E5'},
+  '스포츠레저': {bar:'#059669',bg:'#ECFDF5',text:'#059669'},
+  '출산육아':   {bar:'#EA580C',bg:'#FFF7ED',text:'#EA580C'},
+  '패션잡화':   {bar:'#9333EA',bg:'#FDF4FF',text:'#9333EA'},
+};
+
+function seasonHint(m) {
+  return ({1:'겨울 세일·설 선물',2:'설 연휴·봄 예열',3:'봄 시즌 시작·아우터→봄 신상',
+    4:'봄 피크·아웃도어 급증',5:'어린이날·어버이날·가정의달 선물',6:'초여름·여름 의류',
+    7:'여름 피크·수영복·휴가용품',8:'여름 후반·개학·가을 예열',9:'가을 시작·아웃도어',
+    10:'가을 피크·아우터·트렌치',11:'블프·겨울 준비·패딩',12:'연말·크리스마스·선물'})[m]||'';
+}
+
+function getApiKey() {
+  return sessionStorage.getItem('lastoneApiKey') || localStorage.getItem('lastoneApiKey') || '';
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apikeyInput').value.trim();
+  const st  = document.getElementById('apikeyStatus');
+  
+  // Gemini API 키는 보통 'AIza'로 시작합니다.
+  if (!key.startsWith('AIza')) {
+    st.className = 'apikey-status err';
+    st.textContent = '❌ 올바른 키 형식이 아닙니다 (AIza 로 시작)';
+    return;
+  }
+  localStorage.setItem('lastoneApiKey', key);
+  st.className = 'apikey-status ok';
+  st.textContent = '✅ 저장 완료';
+  document.getElementById('apikeyInput').value = ''; 
+  setTimeout(() => { st.style.display='none'; }, 3000);
+}
+
+async function callAPI(prompt) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('API 키를 먼저 입력하고 저장해주세요 🔑');
+  }
+
+  // Gemini 1.5 Flash 엔드포인트 URL
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2-flash:generateContent?key=${apiKey}`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      // 핵심: 항상 완벽한 JSON 포맷으로만 응답하도록 강제
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error?.message || 'API 요청 중 오류가 발생했습니다.');
+  }
+
+  const txt = data.candidates[0].content.parts[0].text;
+
+  // Gemini가 JSON을 보장하므로 바로 파싱을 시도합니다.
+  try { 
+    return JSON.parse(txt); 
+  } catch(e) {
+    // 만약의 경우를 대비한 기존 복구 함수 fallback
+    return robustParse(txt); 
+  }
+}
+
+function robustParse(raw) {
+  // 1차 시도
+  try { return JSON.parse(raw); } catch(e) {}
+  // 2차: 후행 쉼표 제거
+  let s = raw.replace(/,\s*([\}\]])/g, '$1');
+  try { return JSON.parse(s); } catch(e) {}
+  // 3차: reason 필드 내부 따옴표를 작은따옴표로 치환
+  s = s.replace(/"reason"\s*:\s*"((?:[^"\\]|\\.)*)"/g, (m, p1) => {
+    return '"reason":"' + p1.replace(/"/g, "'") + '"';
+  });
+  try { return JSON.parse(s); } catch(e) {}
+  // 4차: 잘린 JSON 끝 복구
+  const opens = (s.match(/\[/g)||[]).length - (s.match(/\]/g)||[]).length;
+  const openb = (s.match(/\{/g)||[]).length - (s.match(/\}/g)||[]).length;
+  s = s.replace(/,\s*$/, '').replace(/,\s*\{[^\{\}]*$/, '');
+  s += ']'.repeat(Math.max(opens,0)) + '}'.repeat(Math.max(openb,0));
+  try { return JSON.parse(s); } catch(e) { throw new Error('JSON 복구 실패: ' + e.message); }
+}
+
+async function analyze() {
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  const sb = document.getElementById('statusBar');
+  sb.className = 'status-bar show';
+  const y1=targetYear-3, y2=targetYear-2, y3=targetYear-1;
+  sb.textContent = `⏳ ${targetYear}년 ${targetMonth}월 기준 ${y1}·${y2}·${y3}년 3개년 종합 분석 중...`;
+
+  ['sc1','sc2','sc3','sc4'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('brandWrap').style.display='none';
+  document.getElementById('catWrap').style.display='none';
+  document.getElementById('tabNav').style.display='none';
+  document.getElementById('tipBox').classList.remove('show');
+  document.getElementById('footerNote').style.display='none';
+
+  const prompt = `한국 이커머스 MD 전문가. 분석기준일 ${targetYear}년 ${targetMonth}월 ${targetDay}일. 시즌: ${seasonHint(targetMonth)}.
+[3개년 종합] ${y1}년·${y2}년·${y3}년 ${targetMonth}월 네이버 데이터랩 쇼핑인사이트 트렌드를 종합해 가중평균(최신연도 비중 높게)으로 분석.
+브랜드는 패션의류/스포츠레저/출산육아/패션잡화 중에서만. reason은 10자 이내, 따옴표 금지.
+searchVol·salesEst는 3개년 추세 반영한 현실적 정수. JSON만 반환:
+{"refPeriod":"${y1}·${y2}·${y3}년 ${targetMonth}월","keyword":"키워드","summary":"한줄요약","topSearchBrand":"브랜드","topSearchVol":150000,"urgentCount":3,"categories":[{"rank":1,"name":"카테고리","searchVol":180000,"salesEst":25000,"trend":"상승","action":"urgent","reason":"시즌급증"},{"rank":2,"name":"카테고리","searchVol":150000,"salesEst":18000,"trend":"상승","action":"urgent","reason":"봄피크"},{"rank":3,"name":"카테고리","searchVol":120000,"salesEst":14000,"trend":"유지","action":"recommend","reason":"꾸준수요"},{"rank":4,"name":"카테고리","searchVol":90000,"salesEst":10000,"trend":"유지","action":"recommend","reason":"안정판매"},{"rank":5,"name":"카테고리","searchVol":70000,"salesEst":8000,"trend":"하락","action":"normal","reason":"비수기"},{"rank":6,"name":"카테고리","searchVol":55000,"salesEst":6000,"trend":"유지","action":"recommend","reason":"틈새수요"},{"rank":7,"name":"카테고리","searchVol":42000,"salesEst":4500,"trend":"상승","action":"recommend","reason":"신규트렌드"},{"rank":8,"name":"카테고리","searchVol":33000,"salesEst":3500,"trend":"유지","action":"normal","reason":"보통수준"},{"rank":9,"name":"카테고리","searchVol":25000,"salesEst":2500,"trend":"하락","action":"normal","reason":"수요감소"},{"rank":10,"name":"카테고리","searchVol":18000,"salesEst":1800,"trend":"유지","action":"normal","reason":"기본수요"}],"brands":[{"rank":1,"name":"브랜드","category":"패션의류","searchVol":170000,"salesEst":20000,"trend":"상승","action":"urgent","reason":"봄신상급증"},{"rank":2,"name":"브랜드","category":"스포츠레저","searchVol":140000,"salesEst":16000,"trend":"상승","action":"urgent","reason":"아웃도어시즌"},{"rank":3,"name":"브랜드","category":"패션의류","searchVol":115000,"salesEst":13000,"trend":"상승","action":"urgent","reason":"트렌드인기"},{"rank":4,"name":"브랜드","category":"출산육아","searchVol":95000,"salesEst":11000,"trend":"유지","action":"recommend","reason":"선물수요"},{"rank":5,"name":"브랜드","category":"패션잡화","searchVol":78000,"salesEst":9000,"trend":"유지","action":"recommend","reason":"봄악세서리"},{"rank":6,"name":"브랜드","category":"패션의류","searchVol":64000,"salesEst":7200,"trend":"유지","action":"recommend","reason":"기본수요"},{"rank":7,"name":"브랜드","category":"스포츠레저","searchVol":52000,"salesEst":5800,"trend":"유지","action":"recommend","reason":"운동용품"},{"rank":8,"name":"브랜드","category":"패션잡화","searchVol":42000,"salesEst":4600,"trend":"유지","action":"recommend","reason":"안정판매"},{"rank":9,"name":"브랜드","category":"출산육아","searchVol":34000,"salesEst":3700,"trend":"하락","action":"normal","reason":"비수기"},{"rank":10,"name":"브랜드","category":"패션의류","searchVol":27000,"salesEst":2900,"trend":"유지","action":"normal","reason":"보통유지"},{"rank":11,"name":"브랜드","category":"스포츠레저","searchVol":22000,"salesEst":2300,"trend":"상승","action":"recommend","reason":"신규라인업"},{"rank":12,"name":"브랜드","category":"패션의류","searchVol":18000,"salesEst":1900,"trend":"유지","action":"normal","reason":"기본수요"},{"rank":13,"name":"브랜드","category":"패션잡화","searchVol":14000,"salesEst":1500,"trend":"유지","action":"normal","reason":"안정판매"},{"rank":14,"name":"브랜드","category":"출산육아","searchVol":11000,"salesEst":1200,"trend":"유지","action":"normal","reason":"꾸준구매"},{"rank":15,"name":"브랜드","category":"패션의류","searchVol":9000,"salesEst":950,"trend":"유지","action":"normal","reason":"보통수준"},{"rank":16,"name":"브랜드","category":"스포츠레저","searchVol":7500,"salesEst":780,"trend":"하락","action":"normal","reason":"시즌마무리"},{"rank":17,"name":"브랜드","category":"패션의류","searchVol":6200,"salesEst":640,"trend":"유지","action":"normal","reason":"기본수요"},{"rank":18,"name":"브랜드","category":"패션잡화","searchVol":5100,"salesEst":520,"trend":"유지","action":"normal","reason":"소폭수요"},{"rank":19,"name":"브랜드","category":"출산육아","searchVol":4000,"salesEst":410,"trend":"하락","action":"normal","reason":"수요감소"},{"rank":20,"name":"브랜드","category":"패션의류","searchVol":3200,"salesEst":330,"trend":"유지","action":"normal","reason":"기본유지"}],"tips":["팁1","팁2","팁3","팁4"]}`;
+
+  try {
+    const r = await callAPI(prompt);
+
+    document.getElementById('sc1v').textContent = r.refPeriod || `${targetMonth}월 3개년`;
+    document.getElementById('sc2v').textContent = r.keyword || '—';
+    document.getElementById('sc2s').textContent = r.summary || '';
+    document.getElementById('sc3v').textContent = r.topSearchBrand || '—';
+    document.getElementById('sc3s').textContent = r.topSearchVol ? `월 ${fmt(r.topSearchVol)}건 추정` : '';
+    document.getElementById('sc4v').textContent = (r.urgentCount || 0) + '개';
+    ['sc1','sc2','sc3','sc4'].forEach(id=>document.getElementById(id).classList.add('show'));
+
+    const ptag = `📊 ${r.refPeriod||''} · 3개년 종합`;
+    document.getElementById('brandPTag').textContent = ptag;
+    document.getElementById('catPTag').textContent = ptag;
+
+    renderBrandTable(r.brands||[]);
+    renderCatGrid(r.categories||[]);
+
+    if (r.tips?.length) {
+      document.getElementById('tipGrid').innerHTML = r.tips.map(t=>`<div class="tip-item">✔ ${t}</div>`).join('');
+      document.getElementById('tipBox').classList.add('show');
+    }
+
+    document.getElementById('brandWrap').style.display='block';
+    document.getElementById('catWrap').style.display='block';
+    document.getElementById('tabNav').style.display='flex';
+    document.getElementById('footerNote').style.display='block';
+    sb.textContent = `✅ ${targetYear}년 ${targetMonth}월 분석 완료 — ${r.summary||'쿠팡 업데이트 추천이 준비되었습니다'}`;
+  } catch(e) {
+    sb.textContent = '❌ 오류: ' + e.message;
+  }
+  btn.disabled = false;
+}
+
+function fmt(n) {
+  if (!n && n!==0) return '—';
+  if (n>=10000) return (Math.round(n/1000)/10)+'만';
+  if (n>=1000)  return (Math.round(n/100)/10)+'천';
+  return n.toLocaleString();
+}
+function actHtml(a) {
+  if (a==='urgent')    return '<span class="act-urgent">🔥 즉시</span>';
+  if (a==='recommend') return '<span class="act-recommend">✅ 권장</span>';
+  return '<span class="act-normal">— 일반</span>';
+}
+function trendHtml(t) {
+  if (t==='상승') return '<span class="trend-up">▲ 상승</span>';
+  if (t==='하락') return '<span class="trend-down">▼ 하락</span>';
+  return '<span class="trend-flat">— 유지</span>';
+}
+
+function renderBrandTable(brands) {
+  const maxV = Math.max(...brands.map(b=>b.searchVol||0), 1);
+  document.getElementById('brandTbody').innerHTML = brands.map(b => {
+    const cc = CAT[b.category]||{bar:'#aaa',bg:'#f0f0f0',text:'#888'};
+    const gClass = b.rank===1?'g1':b.rank===2?'g2':b.rank===3?'g3':b.action==='urgent'?'hot':'';
+    const pct = Math.round((b.searchVol||0)/maxV*100);
+    const dim = b.rank>10 ? 'background:#f5f5f5;color:#ccc;font-size:10px;' : '';
+    return `<tr data-cat="${b.category}">
+      <td><span class="rnum ${gClass}" style="${dim}">${b.rank}</span></td>
+      <td>
+        <div class="brand-nm">${b.name}</div>
+        <div class="brand-reason">${b.reason||''}</div>
+      </td>
+      <td><span class="cat-pill" style="background:${cc.bg};color:${cc.text};">${b.category}</span></td>
+      <td class="r">
+        <span class="vol-num">${fmt(b.searchVol)}</span>
+        <span class="vol-bar-wrap"><span class="vol-bar" style="width:${pct}%;background:${cc.bar};"></span></span>
+      </td>
+      <td class="r"><span class="sales-pill" style="background:${cc.bg};color:${cc.text};">${fmt(b.salesEst)}건</span></td>
+      <td class="c">${trendHtml(b.trend)}</td>
+      <td class="c">${actHtml(b.action)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterBrand(cat) {
+  document.querySelectorAll('.f-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`.f-tab[data-cat="${cat}"]`).classList.add('active');
+  document.querySelectorAll('#brandTbody tr').forEach(tr=>{
+    tr.classList.toggle('hidden', cat!=='전체' && tr.dataset.cat!==cat);
+  });
+}
+
+function renderCatGrid(cats) {
+  document.getElementById('catGridInner').innerHTML = cats.map(c => {
+    const gClass = c.rank<=3?`g${c.rank}`:c.action==='urgent'?'hot':'';
+    const tMark = c.trend==='상승'?'▲':c.trend==='하락'?'▼':'—';
+    const tColor = c.trend==='상승'?'#16a34a':c.trend==='하락'?'#dc2626':'#aaa';
+    return `<div class="cat-item">
+      <div class="cat-rnum ${gClass}">${c.rank}</div>
+      <div class="cat-body">
+        <div class="cat-name">${c.name}</div>
+        <div class="cat-stats">
+          <span class="stat-chip sc-search">🔍 ${fmt(c.searchVol)}</span>
+          <span class="stat-chip sc-sales">📦 ${fmt(c.salesEst)}건</span>
+          <span class="stat-chip" style="background:#f5f5f5;color:${tColor};font-weight:700;">${tMark} ${c.trend}</span>
+        </div>
+        <div class="cat-reason">${c.reason||''}</div>
+      </div>
+      <div style="flex-shrink:0;">${actHtml(c.action)}</div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0&&tab==='brand')||(i===1&&tab==='category'));
+  });
+  document.getElementById('panelBrand').classList.toggle('active', tab==='brand');
+  document.getElementById('panelCategory').classList.toggle('active', tab==='category');
+}
+
+// 자동 실행 비활성화 - API 키 입력 후 수동 실행
+</script>
+</body>
+</html>

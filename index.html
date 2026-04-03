@@ -243,6 +243,7 @@ th.total-col{background:#fff3cd;color:#b45309}
         </label>
         <select id="proxySelect" style="padding:4px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:11px;font-weight:600;color:#0369a1;background:#fff;cursor:pointer;outline:none">
           <option value="auto">자동 (순차 시도)</option>
+          <option value="vercel" selected>Vercel (권장)</option>
           <option value="local">로컬 (localhost:3100)</option>
           <option value="corsproxy">corsproxy.io</option>
           <option value="allorigins">allorigins.win</option>
@@ -499,6 +500,7 @@ function naverLog(msg, cls=''){
 function useProxy(){ return document.getElementById('corsProxy').checked; }
 
 const PROXY_LIST = [
+  { name:'vercel',     wrap: (url, headers) => `/api/proxy?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`, headersOk:'viaUrl' },
   { name:'local',      wrap: (url, headers) => `http://localhost:3100/proxy?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`, headersOk:'viaUrl' },
   { name:'corsproxy',  wrap: (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`, headersOk:true },
   { name:'allorigins', wrap: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, headersOk:false },

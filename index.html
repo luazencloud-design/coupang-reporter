@@ -243,6 +243,7 @@ th.total-col{background:#fff3cd;color:#b45309}
         </label>
         <select id="proxySelect" style="padding:4px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:11px;font-weight:600;color:#0369a1;background:#fff;cursor:pointer;outline:none">
           <option value="auto">자동 (순차 시도)</option>
+          <option value="local">로컬 (localhost:3100)</option>
           <option value="corsproxy">corsproxy.io</option>
           <option value="allorigins">allorigins.win</option>
           <option value="codetabs">codetabs.com</option>
@@ -498,9 +499,10 @@ function naverLog(msg, cls=''){
 function useProxy(){ return document.getElementById('corsProxy').checked; }
 
 const PROXY_LIST = [
-  { name:'corsproxy',  wrap: url => `https://corsproxy.io/?${encodeURIComponent(url)}`, headersOk:true },
-  { name:'allorigins', wrap: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, headersOk:false },
-  { name:'codetabs',   wrap: url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, headersOk:false },
+  { name:'local',      wrap: (url, headers) => `http://localhost:3100/proxy?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`, headersOk:'viaUrl' },
+  { name:'corsproxy',  wrap: (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`, headersOk:true },
+  { name:'allorigins', wrap: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, headersOk:false },
+  { name:'codetabs',   wrap: (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, headersOk:false },
 ];
 
 function getSelectedProxies(){
@@ -545,13 +547,15 @@ async function callNaverKeywordAPI(keywords){
     const timestamp = String(Date.now());
     const signature = await generateSignature(secretKey, timestamp, method, uri);
     const headers = { 'X-Timestamp':timestamp, 'X-API-KEY':apiKey, 'X-Customer':customerId, 'X-Signature':signature };
-    const proxyUrl = proxy.wrap(baseUrl);
+
+    // local proxy: headers are passed via URL param; others: via fetch headers or not at all
+    const proxyUrl = proxy.headersOk==='viaUrl' ? proxy.wrap(baseUrl, headers) : proxy.wrap(baseUrl);
 
     naverLog(`🔀 프록시 시도 ${i+1}/${proxies.length}: ${proxy.name}`, 'log-info');
 
     try {
       const fetchOpts = { method:'GET' };
-      if(proxy.headersOk) fetchOpts.headers = headers;
+      if(proxy.headersOk===true) fetchOpts.headers = headers;
 
       const timeoutPromise = new Promise((_,reject) => setTimeout(()=>reject(new Error('시간 초과(8초)')), 8000));
       const res = await Promise.race([ fetch(proxyUrl, fetchOpts), timeoutPromise ]);

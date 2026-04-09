@@ -46,7 +46,19 @@ body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;back
 .ctrl-chip{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);transition:all .15s}
 .ctrl-chip:hover{border-color:rgba(255,255,255,.6);color:#fff}
 .ctrl-chip.active{background:#fff;color:#1a1a2e;border-color:#fff}
+.view-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0}
+.view-chip{padding:8px 18px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);transition:all .15s;position:relative}
+.view-chip:hover{border-color:rgba(255,255,255,.6);color:#fff}
+.view-chip.active{background:#03c75a;color:#fff;border-color:#03c75a}
+.view-chip .soon{font-size:8px;background:rgba(255,255,255,.2);color:#fff;padding:1px 5px;border-radius:6px;margin-left:4px;vertical-align:middle;letter-spacing:.04em}
+.view-chip.active .soon{background:rgba(255,255,255,.25)}
 .ctrl-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.soon-panel{background:#fff;border-radius:14px;padding:48px 24px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07);display:none}
+.soon-panel.show{display:block}
+.soon-icon{font-size:40px;margin-bottom:12px}
+.soon-title{font-size:16px;font-weight:800;color:#1a1a2e;margin-bottom:6px}
+.soon-desc{font-size:13px;color:#888;line-height:1.7;max-width:440px;margin:0 auto}
+.soon-tag{display:inline-block;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:12px}
 .btn-analyze{background:#03c75a;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:800;cursor:pointer;transition:all .15s}
 .btn-analyze:hover{background:#02b350}
 .btn-analyze:disabled{background:#555;color:#aaa;cursor:not-allowed}
@@ -105,6 +117,45 @@ th.total-col{background:#fff3cd;color:#b45309}
 
 .vol-bar-wrap{display:inline-block;width:70px;height:6px;background:#f0f0f0;border-radius:3px;vertical-align:middle;margin-left:6px;overflow:hidden}
 .vol-bar{height:100%;border-radius:3px;display:block;background:#03c75a}
+
+.quota-warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:11px;color:#9a3412;line-height:1.6}
+.quota-warning b{color:#7c2d12}
+.quota-counter{display:inline-block;background:#fff;border:1px solid #fed7aa;border-radius:6px;padding:2px 8px;font-family:monospace;font-weight:700;color:#9a3412;margin-left:6px}
+
+/* ── Compare grid ── */
+.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:8px}
+@media(max-width:900px){.compare-grid{grid-template-columns:repeat(2,1fr)}}
+.compare-col{min-width:0}
+.compare-year{font-size:18px;font-weight:800;color:#03c75a;text-align:center;padding:8px 0;background:#e6f7ee;border-radius:8px;margin-bottom:10px}
+.compare-row{display:grid;grid-template-columns:24px 1fr 42px;align-items:center;gap:6px;padding:5px 4px;border-bottom:1px solid #f5f5f5;font-size:11px}
+.compare-row .n{color:#aaa;text-align:right;font-weight:700;font-family:monospace}
+.compare-row.top3 .n{color:#b45309}
+.compare-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#1a1a2e}
+.compare-row .dl{font-size:9px;text-align:right;font-family:monospace;font-weight:700}
+.dl.up{color:#16a34a}
+.dl.down{color:#dc2626}
+.dl.flat{color:#ccc}
+.dl.new{color:#16a34a;background:#dcfce7;padding:1px 4px;border-radius:4px}
+
+/* ── Movers ── */
+.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+@media(max-width:700px){.movers-grid{grid-template-columns:1fr}}
+.movers-col h4{font-size:13px;font-weight:800;padding-bottom:8px;border-bottom:2px solid #f0f0f0;margin-bottom:10px}
+.movers-col.up h4{color:#16a34a;border-bottom-color:#bbf7d0}
+.movers-col.down h4{color:#dc2626;border-bottom-color:#fecaca}
+.mover-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
+.mover-row .nm{font-weight:700;color:#1a1a2e}
+.mover-row .tr{font-family:monospace;font-size:10px;color:#aaa}
+.mover-row .ch{font-family:monospace;font-weight:800;font-size:12px;min-width:40px;text-align:right}
+.mover-row.up .ch{color:#16a34a}
+.mover-row.down .ch{color:#dc2626}
+
+/* ── Sub tabs (year/month) ── */
+.sub-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;padding:10px 14px;background:#f8f8fa;border-radius:10px}
+.sub-tabs .lbl{font-size:11px;font-weight:700;color:#888;margin-right:6px;align-self:center;text-transform:uppercase;letter-spacing:.06em}
+.sub-tab{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid #e0e0e0;background:#fff;color:#888}
+.sub-tab:hover{color:#1a1a2e}
+.sub-tab.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e}
 
 /* ── API log ── */
 .api-log{max-height:180px;overflow-y:auto;font-size:11px;color:#666;background:#f8f8f8;border-radius:8px;padding:10px 12px;margin-top:10px;display:none;font-family:monospace;line-height:1.7}
@@ -178,6 +229,36 @@ th.total-col{background:#fff3cd;color:#b45309}
     <div class="api-log" id="naverLog"></div>
   </div>
 
+  <!-- ── DataLab API Config ── -->
+  <div class="config-card">
+    <h3><span class="icon-naver">✦</span> 네이버 데이터랩 Open API <span style="font-size:10px;color:#888;font-weight:500;margin-left:4px">· 과거 월별 추이 조회용</span></h3>
+    <div class="field-row">
+      <label>Client ID</label>
+      <input type="text" class="field-input" id="datalabClientId" placeholder="developers.naver.com에서 발급" />
+    </div>
+    <div class="field-row">
+      <label>Client Secret</label>
+      <input type="password" class="field-input" id="datalabSecret" placeholder="AAAA..." />
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <button class="btn-naver" onclick="saveDataLabKeys()">저장</button>
+      <button class="btn-naver" style="background:#065f46" onclick="testDataLabAPI()">연결 테스트</button>
+      <span class="key-status" id="datalabStatus"></span>
+    </div>
+
+    <div class="quota-warning">
+      ⚠️ <b>일일 호출 한도 1,000회</b> · 전체 분석 1회(50브랜드 × 1카테고리) ≈ 10회 사용<br>
+      3백화점 × 4카테고리 전부 = 120회 → <b>하루 약 8회 전체 분석 가능</b>
+      <span class="quota-counter">오늘 사용: <span id="quotaUsed">0</span>회</span>
+    </div>
+
+    <div class="config-hint">
+      <a href="https://developers.naver.com/apps" target="_blank" style="color:#03c75a">developers.naver.com/apps</a> → 애플리케이션 등록 → "데이터랩(검색어트렌드)" 권한 선택
+    </div>
+
+    <div class="api-log" id="datalabLog"></div>
+  </div>
+
   <!-- ── Control bar ── -->
   <div class="control-card">
     <div class="ctrl-label">백화점</div>
@@ -185,6 +266,9 @@ th.total-col{background:#fff3cd;color:#b45309}
 
     <div class="ctrl-label">카테고리</div>
     <div class="ctrl-row" id="catTabs"></div>
+
+    <div class="ctrl-label">뷰</div>
+    <div class="view-row" id="viewTabs"></div>
 
     <div class="ctrl-actions">
       <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">🔍 검색량 조회</button>
@@ -226,7 +310,24 @@ th.total-col{background:#fff3cd;color:#b45309}
     </table>
   </div>
 
-  <div class="footer-note">© 라스트원 · Naver Search Ad API 기반</div>
+  <!-- ── Historical view container ── -->
+  <div class="card-wrap" id="historicalCard" style="display:none">
+    <div class="card-head">
+      <div class="card-title"><span id="histTitle">—</span></div>
+      <div class="period-tag" id="histPeriod">2022.01 – 2025.12</div>
+    </div>
+    <div id="histBody"></div>
+  </div>
+
+  <!-- ── Empty state (no data yet for historical views) ── -->
+  <div class="soon-panel" id="soonPanel">
+    <div class="soon-icon">📊</div>
+    <div class="soon-title" id="soonTitle">데이터가 아직 없습니다</div>
+    <div class="soon-desc" id="soonDesc">위의 <b>🔍 과거 데이터 포함 조회</b> 버튼을 눌러 데이터랩 API로 2022~2025 월별 데이터를 조회하세요.<br>조회가 완료되면 이 뷰에 순위가 자동 표시됩니다.</div>
+    <div class="soon-tag">데이터랩 API 호출 필요</div>
+  </div>
+
+  <div class="footer-note">© 라스트원 · Naver Search Ad + DataLab API 기반</div>
 </div>
 
 <script>
@@ -252,7 +353,19 @@ for(const st of STORES){BRANDS[st]={};for(const c of CATS){BRANDS[st][c]=[...BRA
    ═══════════════════════════════════════════ */
 let activeStore = "롯데백화점";
 let activeCat = "패션잡화";
-let lastResult = null; // {store, cat, rows:[{name, pc, mo, total, comp}]}
+let activeView = "current";
+let activeYear = 2025;
+let activeMonth = 0; // 0-11
+let lastResult = null;    // 현재월 결과 {store, cat, rows}
+let histCache = {};       // 히스토리컬 캐시 {store: {cat: {brands:[...], fetchedAt}}}
+
+const VIEWS = [
+  {id:"current",    label:"현재 월 TOP 50",  historical:false},
+  {id:"cumulative", label:"4년 누적 TOP 50", historical:true},
+  {id:"compare",    label:"연도별 비교",      historical:true},
+  {id:"monthly",    label:"월별 상세",        historical:true},
+  {id:"movers",     label:"급상승·급하락",    historical:true}
+];
 
 /* ═══════════════════════════════════════════
    Tab rendering
@@ -260,12 +373,56 @@ let lastResult = null; // {store, cat, rows:[{name, pc, mo, total, comp}]}
 function renderTabs(){
   const st = document.getElementById("storeTabs");
   st.innerHTML = STORES.map(s=>`<button class="ctrl-chip ${s===activeStore?'active':''}" data-s="${s}">${s}</button>`).join("");
-  st.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeStore=b.dataset.s;renderTabs();});
+  st.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeStore=b.dataset.s;renderTabs();switchView();});
   const ct = document.getElementById("catTabs");
   ct.innerHTML = CATS.map(c=>`<button class="ctrl-chip ${c===activeCat?'active':''}" data-c="${c}">${c}</button>`).join("");
-  ct.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeCat=b.dataset.c;renderTabs();});
+  ct.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeCat=b.dataset.c;renderTabs();switchView();});
+  const vt = document.getElementById("viewTabs");
+  vt.innerHTML = VIEWS.map(v=>`<button class="view-chip ${v.id===activeView?'active':''}" data-v="${v.id}">${v.label}</button>`).join("");
+  vt.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;renderTabs();switchView();});
+  // Analyze button label
+  const btn=document.getElementById("analyzeBtn");
+  const v=VIEWS.find(x=>x.id===activeView);
+  btn.textContent = v.historical ? "🔍 과거 데이터 포함 조회" : "🔍 검색량 조회";
 }
 renderTabs();
+
+function switchView(){
+  const view = VIEWS.find(v=>v.id===activeView);
+  const resultCard = document.getElementById("resultCard");
+  const histCard = document.getElementById("historicalCard");
+  const soonPanel = document.getElementById("soonPanel");
+
+  // Hide all result panels
+  resultCard.classList.remove("show");
+  histCard.style.display="none";
+  soonPanel.classList.remove("show");
+  document.querySelectorAll(".sum-card").forEach(c=>c.classList.remove("show"));
+
+  if(!view.historical){
+    // Current month view
+    if(lastResult && lastResult.store===activeStore && lastResult.cat===activeCat){
+      renderResults();
+    }
+    return;
+  }
+
+  // Historical view
+  const cached = histCache[activeStore]?.[activeCat];
+  if(!cached){
+    document.getElementById("soonTitle").textContent = view.label + " — 데이터 없음";
+    soonPanel.classList.add("show");
+    return;
+  }
+
+  // Render historical view
+  histCard.style.display="block";
+  document.getElementById("histTitle").textContent = `${activeStore} · ${activeCat} · ${view.label}`;
+  if(activeView==="cumulative") renderCumulative(cached.brands);
+  else if(activeView==="compare") renderCompare(cached.brands);
+  else if(activeView==="monthly") renderMonthly(cached.brands);
+  else if(activeView==="movers") renderMovers(cached.brands);
+}
 
 /* ═══════════════════════════════════════════
    Naver API Keys (localStorage)
@@ -302,6 +459,12 @@ window.addEventListener('load',()=>{
     const st=document.getElementById('naverStatus');
     st.className='key-status ok';st.textContent='✅ 저장됨';
   }
+  const dk=getDataLabKeys();
+  if(dk.clientId&&dk.clientSecret){
+    const st=document.getElementById('datalabStatus');
+    st.className='key-status ok';st.textContent='✅ 저장됨';
+  }
+  refreshQuotaDisplay();
 });
 
 /* ═══════════════════════════════════════════
@@ -423,39 +586,185 @@ async function testNaverAPI(){
 }
 
 /* ═══════════════════════════════════════════
-   Analyze: fetch & rank top 50
+   DataLab API (Open API · Client ID/Secret)
    ═══════════════════════════════════════════ */
+function getDataLabKeys(){
+  return {
+    clientId: localStorage.getItem('lo_datalabClientId')||'',
+    clientSecret: localStorage.getItem('lo_datalabSecret')||''
+  };
+}
+function saveDataLabKeys(){
+  const cid=document.getElementById('datalabClientId').value.trim();
+  const cs=document.getElementById('datalabSecret').value.trim();
+  const st=document.getElementById('datalabStatus');
+  if(cid)localStorage.setItem('lo_datalabClientId',cid);
+  if(cs)localStorage.setItem('lo_datalabSecret',cs);
+  document.getElementById('datalabClientId').value='';
+  document.getElementById('datalabSecret').value='';
+  const k=getDataLabKeys();
+  if(k.clientId&&k.clientSecret){
+    st.className='key-status ok';st.textContent='✅ 저장됨';
+  }else{
+    st.className='key-status err';st.textContent='⚠️ 일부 누락';
+  }
+}
+
+function datalabLog(msg, cls=''){
+  const el=document.getElementById('datalabLog');
+  el.classList.add('show');
+  el.innerHTML+=`<div class="${cls}">${new Date().toLocaleTimeString()} ${msg}</div>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+// 일일 할당량 카운터 (localStorage, 날짜별 리셋)
+function getQuotaUsed(){
+  const today=new Date().toISOString().slice(0,10);
+  const saved=JSON.parse(localStorage.getItem('lo_datalabQuota')||'{}');
+  return saved.date===today?(saved.count||0):0;
+}
+function incrementQuota(n=1){
+  const today=new Date().toISOString().slice(0,10);
+  const count=getQuotaUsed()+n;
+  localStorage.setItem('lo_datalabQuota',JSON.stringify({date:today,count}));
+  document.getElementById('quotaUsed').textContent=count;
+}
+function refreshQuotaDisplay(){
+  document.getElementById('quotaUsed').textContent=getQuotaUsed();
+}
+
+async function callDataLabAPI(keywords, startDate="2022-01-01", endDate="2025-12-31"){
+  const k=getDataLabKeys();
+  if(!k.clientId||!k.clientSecret){
+    datalabLog('⚠️ 데이터랩 API 키가 설정되지 않았습니다','log-err');
+    return null;
+  }
+  const url='https://openapi.naver.com/v1/datalab/search';
+  const headers={
+    'X-Naver-Client-Id':k.clientId,
+    'X-Naver-Client-Secret':k.clientSecret,
+    'Content-Type':'application/json'
+  };
+  const body={
+    startDate, endDate,
+    timeUnit:'month',
+    keywordGroups: keywords.slice(0,5).map(kw=>({groupName:kw, keywords:[kw]}))
+  };
+
+  // Vercel 프록시를 통해 POST
+  const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`;
+  try{
+    const res=await fetch(proxyUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    incrementQuota(1);
+    if(!res.ok){
+      const err=await res.text();
+      datalabLog(`❌ API 오류 (${res.status}): ${err.slice(0,120)}`,'log-err');
+      return null;
+    }
+    return await res.json();
+  }catch(e){
+    datalabLog(`❌ 호출 실패: ${e.message}`,'log-err');
+    return null;
+  }
+}
+
+async function testDataLabAPI(){
+  const st=document.getElementById('datalabStatus');
+  st.className='key-status';st.style.display='inline-block';
+  st.textContent='⏳ 테스트 중...';st.style.background='#fef3c7';st.style.color='#92400e';
+  document.getElementById('datalabLog').innerHTML='';
+  datalabLog('🔄 데이터랩 API 연결 테스트 (키워드: "나이키")','log-info');
+  const data=await callDataLabAPI(['나이키']);
+  if(data&&data.results&&data.results.length){
+    st.className='key-status ok';st.textContent='✅ 정상';
+    const points=data.results[0].data?.length||0;
+    datalabLog(`✅ 연결 성공! ${points}개월 데이터 수신`,'log-ok');
+  }else{
+    st.className='key-status err';st.textContent='❌ 실패';
+    datalabLog('❌ 연결 실패 — 키/권한/프록시 확인','log-err');
+  }
+}
+
+/* Merge: 검색광고 절대값 × 데이터랩 월별 비율 → 48개월 절대치 */
+function mergeBrandMonthly(brandName, searchAdData, datalabSeries){
+  const currentAbs = searchAdData ? (searchAdData.pc+searchAdData.mo) : 0;
+  const monthly = new Array(48).fill(0);
+  if(datalabSeries && datalabSeries.length){
+    datalabSeries.forEach(pt=>{
+      const d=new Date(pt.period);
+      const y=d.getFullYear();
+      const m=d.getMonth();
+      const idx=(y-2022)*12+m;
+      if(idx>=0&&idx<48) monthly[idx]=pt.ratio;
+    });
+  }
+  // 최신 비-0 지점을 앵커로 스케일링
+  let anchorIdx=47;
+  while(anchorIdx>=0 && monthly[anchorIdx]===0) anchorIdx--;
+  let scaled;
+  if(anchorIdx>=0 && monthly[anchorIdx]>0 && currentAbs>0){
+    const scale = currentAbs / monthly[anchorIdx];
+    scaled = monthly.map(v=>Math.round(v*scale));
+  }else{
+    scaled = monthly.slice();
+  }
+  const yearly=[0,1,2,3].map(y=>scaled.slice(y*12,y*12+12).reduce((a,b)=>a+b,0));
+  return {
+    name: brandName,
+    pc: searchAdData?.pc||0,
+    mo: searchAdData?.mo||0,
+    current: currentAbs,
+    monthly: scaled,
+    yearly,
+    total: yearly.reduce((a,b)=>a+b,0)
+  };
+}
 async function analyze(){
   const keys=getNaverKeys();
   if(!keys.customerId||!keys.apiKey||!keys.secretKey){
-    setStatus('⚠️ 먼저 네이버 API 키를 저장해주세요','err');
+    setStatus('⚠️ 먼저 네이버 검색광고 API 키를 저장해주세요','err');
     return;
+  }
+
+  const view = VIEWS.find(v=>v.id===activeView);
+  const needsHistorical = view.historical;
+
+  if(needsHistorical){
+    const dk=getDataLabKeys();
+    if(!dk.clientId||!dk.clientSecret){
+      setStatus('⚠️ 과거 데이터 조회를 위해 데이터랩 API 키도 저장해주세요','err');
+      return;
+    }
   }
 
   const brandList = BRANDS[activeStore][activeCat];
   const btn=document.getElementById('analyzeBtn');
   btn.disabled=true;btn.textContent='⏳ 조회 중...';
   document.getElementById('naverLog').innerHTML='';
+  if(needsHistorical) document.getElementById('datalabLog').innerHTML='';
   setStatus(`${activeStore} · ${activeCat} · ${brandList.length}개 브랜드 조회 시작...`,'info');
 
-  const results = {}; // {brandName: {pc, mo, total, comp}}
+  // ── 1) 검색광고 API: 현재 월 절대 검색수 ──
+  const searchAdResults = {};
   const CHUNK=5;
   for(let i=0;i<brandList.length;i+=CHUNK){
     const chunk=brandList.slice(i,i+CHUNK);
-    naverLog(`📡 ${Math.floor(i/CHUNK)+1}/${Math.ceil(brandList.length/CHUNK)}: [${chunk.join(', ')}]`,'log-info');
+    naverLog(`📡 SearchAd ${Math.floor(i/CHUNK)+1}/${Math.ceil(brandList.length/CHUNK)}: [${chunk.join(', ')}]`,'log-info');
     const data=await callNaverKeywordAPI(chunk);
     if(data&&data.keywordList){
       for(const item of data.keywordList){
         const kw=(item.relKeyword||item.keyword||'').trim();
         const matched=chunk.find(b=>
-          kw===b||
-          kw.toLowerCase()===b.toLowerCase()||
-          kw.replace(/\s/g,'')===b.replace(/\s/g,'')
+          kw===b||kw.toLowerCase()===b.toLowerCase()||kw.replace(/\s/g,'')===b.replace(/\s/g,'')
         );
-        if(matched&&!results[matched]){
+        if(matched&&!searchAdResults[matched]){
           const pc=parseInt(item.monthlyPcQcCnt)||0;
           const mo=parseInt(item.monthlyMobileQcCnt)||0;
-          results[matched]={
+          searchAdResults[matched]={
             pc: pc===-1?0:pc,
             mo: mo===-1?0:mo,
             total: (pc===-1?0:pc)+(mo===-1?0:mo),
@@ -464,26 +773,48 @@ async function analyze(){
         }
       }
     }
-    setStatus(`조회 중... ${Math.min(i+CHUNK,brandList.length)}/${brandList.length}`,'info');
+    setStatus(`검색광고 조회 중... ${Math.min(i+CHUNK,brandList.length)}/${brandList.length}`,'info');
     if(i+CHUNK<brandList.length) await new Promise(r=>setTimeout(r,300));
   }
 
-  // Build rows — include unmatched as 0 for transparency
+  // ── 2) 데이터랩 API: 과거 월별 추이 (필요시) ──
+  if(needsHistorical){
+    const datalabSeries = {};
+    for(let i=0;i<brandList.length;i+=CHUNK){
+      const chunk=brandList.slice(i,i+CHUNK);
+      datalabLog(`📡 DataLab ${Math.floor(i/CHUNK)+1}/${Math.ceil(brandList.length/CHUNK)}: [${chunk.join(', ')}]`,'log-info');
+      const data=await callDataLabAPI(chunk);
+      if(data&&data.results){
+        for(const r of data.results){
+          const brand=r.title;
+          const matched=chunk.find(b=>b===brand);
+          if(matched) datalabSeries[matched]=r.data||[];
+        }
+      }
+      setStatus(`데이터랩 조회 중... ${Math.min(i+CHUNK,brandList.length)}/${brandList.length}`,'info');
+      if(i+CHUNK<brandList.length) await new Promise(r=>setTimeout(r,400));
+    }
+    const brandMerged = brandList.map(b=>mergeBrandMonthly(b, searchAdResults[b], datalabSeries[b]));
+    histCache[activeStore] = histCache[activeStore]||{};
+    histCache[activeStore][activeCat] = {brands:brandMerged, fetchedAt:Date.now()};
+    datalabLog(`✅ 데이터랩 조회 완료 · 머지 완료`,'log-ok');
+  }
+
+  // ── 3) 현재 월 결과 ──
   const rows = brandList.map(b=>({
     name:b,
-    pc: results[b]?.pc??null,
-    mo: results[b]?.mo??null,
-    total: results[b]?.total??0,
-    comp: results[b]?.comp??null,
-    matched: !!results[b]
+    pc: searchAdResults[b]?.pc??null,
+    mo: searchAdResults[b]?.mo??null,
+    total: searchAdResults[b]?.total??0,
+    comp: searchAdResults[b]?.comp??null,
+    matched: !!searchAdResults[b]
   })).sort((a,b)=>b.total-a.total).slice(0,50);
-
   lastResult={store:activeStore,cat:activeCat,rows};
-  renderResults();
+
   const matchedCount=rows.filter(r=>r.matched).length;
-  setStatus(`✅ 완료 · ${matchedCount}/${brandList.length}개 매칭`,'ok');
-  naverLog(`✅ 조회 완료: ${matchedCount}/${brandList.length}개 브랜드 매칭`,'log-ok');
-  btn.disabled=false;btn.textContent='🔍 검색량 조회';
+  setStatus(`✅ 완료 · ${matchedCount}/${brandList.length}개 매칭${needsHistorical?' · 48개월 데이터 확보':''}`,'ok');
+  switchView();
+  btn.disabled=false;btn.textContent=needsHistorical?"🔍 과거 데이터 포함 조회":"🔍 검색량 조회";
   document.getElementById('exportBtn').disabled=false;
 }
 
@@ -529,6 +860,91 @@ function renderResults(){
       <td><div class="vol-bar-wrap"><span class="vol-bar" style="width:${pct}%"></span></div></td>
     </tr>`;
   }).join("");
+}
+
+/* ═══════════════════════════════════════════
+   Historical View Renderers
+   ═══════════════════════════════════════════ */
+function histRowHTML(brands, valueFn){
+  const list = brands.map(b=>({name:b.name, val:valueFn(b)})).sort((a,b)=>b.val-a.val).slice(0,50);
+  const max = list[0]?.val || 1;
+  return `<table><thead><tr>
+    <th style="width:50px">순위</th><th>브랜드</th><th class="r total-col">검색량</th><th>비중</th>
+    </tr></thead><tbody>${list.map((r,i)=>{
+      const cls=i===0?'g1':i===1?'g2':i===2?'g3':'';
+      const pct=r.val>0?Math.round(r.val/max*100):0;
+      return `<tr>
+        <td><span class="rnum ${cls}">${i+1}</span></td>
+        <td><span class="brand-nm">${r.name}</span></td>
+        <td class="r total-col"><span class="total-val">${r.val.toLocaleString()}</span></td>
+        <td><div class="vol-bar-wrap"><span class="vol-bar" style="width:${pct}%"></span></div></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+function renderCumulative(brands){
+  document.getElementById("histPeriod").textContent="2022.01 – 2025.12 누적";
+  document.getElementById("histBody").innerHTML = histRowHTML(brands, b=>b.total);
+}
+
+function renderCompare(brands){
+  document.getElementById("histPeriod").textContent="연도별 TOP 50 · 전년 대비 순위변동";
+  const yrs=[2022,2023,2024,2025];
+  const rBy = yrs.map((_,yi)=>brands.map(b=>({name:b.name,val:b.yearly[yi]})).sort((a,b)=>b.val-a.val).slice(0,50));
+  const cols = rBy.map((list,yi)=>`
+    <div class="compare-col">
+      <div class="compare-year">${yrs[yi]}</div>
+      ${list.map((b,i)=>{
+        const prevIdx = yi>0 ? rBy[yi-1].findIndex(x=>x.name===b.name) : -1;
+        let d='';
+        if(yi===0) d='<span class="dl flat">·</span>';
+        else if(prevIdx===-1) d='<span class="dl new">NEW</span>';
+        else if(prevIdx>i) d=`<span class="dl up">▲${prevIdx-i}</span>`;
+        else if(prevIdx<i) d=`<span class="dl down">▼${i-prevIdx}</span>`;
+        else d='<span class="dl flat">−</span>';
+        return `<div class="compare-row ${i<3?'top3':''}">
+          <span class="n">${i+1}</span><span class="nm">${b.name}</span>${d}</div>`;
+      }).join('')}
+    </div>`).join('');
+  document.getElementById("histBody").innerHTML = `<div class="compare-grid">${cols}</div>`;
+}
+
+function renderMonthly(brands){
+  document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;
+  const yrs=[2022,2023,2024,2025];
+  const yearTabs = yrs.map(y=>`<button class="sub-tab ${y===activeYear?'active':''}" data-y="${y}">${y}년</button>`).join('');
+  const monthTabs = Array.from({length:12},(_,i)=>`<button class="sub-tab ${i===activeMonth?'active':''}" data-m="${i}">${i+1}월</button>`).join('');
+  const idx = (activeYear-2022)*12 + activeMonth;
+  const table = histRowHTML(brands, b=>b.monthly[idx]||0);
+  document.getElementById("histBody").innerHTML = `
+    <div class="sub-tabs"><span class="lbl">연도</span>${yearTabs}</div>
+    <div class="sub-tabs"><span class="lbl">월</span>${monthTabs}</div>
+    ${table}`;
+  document.querySelectorAll("#histBody [data-y]").forEach(b=>b.onclick=()=>{activeYear=+b.dataset.y;renderMonthly(brands);document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;});
+  document.querySelectorAll("#histBody [data-m]").forEach(b=>b.onclick=()=>{activeMonth=+b.dataset.m;renderMonthly(brands);document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;});
+}
+
+function renderMovers(brands){
+  document.getElementById("histPeriod").textContent="2022 → 2025 순위 변동";
+  const r22 = brands.map(b=>({name:b.name,val:b.yearly[0]})).sort((a,b)=>b.val-a.val);
+  const r25 = brands.map(b=>({name:b.name,val:b.yearly[3]})).sort((a,b)=>b.val-a.val);
+  const rk22={},rk25={};
+  r22.forEach((b,i)=>rk22[b.name]=i+1);
+  r25.forEach((b,i)=>rk25[b.name]=i+1);
+  const moves = brands.map(b=>({name:b.name,r22:rk22[b.name],r25:rk25[b.name],diff:rk22[b.name]-rk25[b.name]}));
+  const risers = [...moves].sort((a,b)=>b.diff-a.diff).slice(0,15);
+  const fallers = [...moves].sort((a,b)=>a.diff-b.diff).slice(0,15);
+  const col = (list,cls,sym)=>list.map(b=>`
+    <div class="mover-row ${cls}">
+      <span class="nm">${b.name}</span>
+      <span class="tr">${b.r22} → ${b.r25}</span>
+      <span class="ch">${sym}${Math.abs(b.diff)}</span>
+    </div>`).join('');
+  document.getElementById("histBody").innerHTML = `
+    <div class="movers-grid">
+      <div class="movers-col up"><h4>▲ 급상승 TOP 15</h4>${col(risers,'up','▲')}</div>
+      <div class="movers-col down"><h4>▼ 급하락 TOP 15</h4>${col(fallers,'down','▼')}</div>
+    </div>`;
 }
 
 /* ═══════════════════════════════════════════

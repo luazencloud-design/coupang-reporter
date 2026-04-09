@@ -15,13 +15,15 @@ body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;back
 .header h1{font-size:22px;font-weight:800;color:#1a1a2e;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
 .header p{font-size:13px;color:#888}
 
-/* ── Config ── */
-.config-card{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:18px}
-.config-card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+/* ── Config section (side-by-side) ── */
+.config-section{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:900px){.config-section{grid-template-columns:1fr}}
+.config-card{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07);display:flex;flex-direction:column}
+.config-card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .icon-naver{color:#03c75a}
 .field-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap}
-.field-row label{font-size:12px;font-weight:600;color:#555;min-width:90px;flex-shrink:0}
-.field-input{flex:1;min-width:180px;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:12px;font-family:monospace;outline:none;transition:border-color .2s;color:#333}
+.field-row label{font-size:12px;font-weight:600;color:#555;min-width:84px;flex-shrink:0}
+.field-input{flex:1;min-width:120px;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:12px;font-family:monospace;outline:none;transition:border-color .2s;color:#333}
 .field-input:focus{border-color:#03c75a}
 .btn-naver{background:#03c75a;color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer}
 .btn-naver:hover{background:#02b350}
@@ -178,8 +180,10 @@ th.total-col{background:#fff3cd;color:#b45309}
     <p>롯데 · 신세계 · 현대백화점 입점 브랜드 네이버 검색량 TOP 50</p>
   </div>
 
-  <!-- ── Naver API Config ── -->
-  <div class="config-card">
+  <!-- ── API Configs (side-by-side) ── -->
+  <div class="config-section">
+
+  <!-- ── Naver Search Ad API Config ── -->  <div class="config-card">
     <h3><span class="icon-naver">N</span> 네이버 검색광고 API</h3>
     <div class="field-row">
       <label>Customer ID</label>
@@ -258,6 +262,8 @@ th.total-col{background:#fff3cd;color:#b45309}
 
     <div class="api-log" id="datalabLog"></div>
   </div>
+
+  </div><!-- /config-section -->
 
   <!-- ── Control bar ── -->
   <div class="control-card">

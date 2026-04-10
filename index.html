@@ -3,34 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>라스트원 백화점 검색 랭킹</title>
+<title>브랜드 & 카테고리 순위 상승 트래커</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f2f7;min-height:100vh;padding:24px 16px;color:#1a1a2e}
-.container{max-width:1280px;margin:0 auto}
+.container{max-width:1200px;margin:0 auto}
 
-/* ── Header ── */
+/* Header */
 .header{text-align:center;margin-bottom:22px}
-.header h1{font-size:22px;font-weight:800;color:#1a1a2e;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
+.header h1{font-size:21px;font-weight:800;color:#1a1a2e;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
 .header p{font-size:13px;color:#888}
 
-/* ── Config section (side-by-side) ── */
-.config-section{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
-@media(max-width:900px){.config-section{grid-template-columns:1fr}}
-.config-card{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07);display:flex;flex-direction:column}
-.config-card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Date banner */
+.date-banner{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 16px rgba(15,23,42,.25)}
+.date-left{display:flex;flex-direction:column;gap:4px}
+.date-label{font-size:12px;color:rgba(255,255,255,.5)}
+.date-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.date-row input[type=date]{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 12px;color:#fff;font-size:14px;font-weight:600;outline:none;cursor:pointer}
+.date-vs{color:rgba(255,255,255,.4);font-size:13px;font-weight:600}
+.date-ref{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.date-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px}
+.badge-coupang{background:#fee500;color:#1a1a2e}
+.badge-naver{background:#03c75a;color:#fff}
+.btn-analyze{background:#fff;color:#1a1a2e;border:none;border-radius:10px;padding:9px 20px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-analyze:hover{background:#f0f0f0}
+.btn-analyze:disabled{background:#555;color:#999;cursor:not-allowed}
+
+/* Status */
+.status-bar{text-align:center;padding:13px;font-size:14px;color:#555;background:#fff;border-radius:10px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.05);display:none}
+.status-bar.show{display:block}
+
+/* Summary cards */
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:700px){.summary-row{grid-template-columns:repeat(2,1fr)}}
+.sum-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:none}
+.sum-card.show{display:block}
+.sum-label{font-size:11px;color:#aaa;font-weight:600;margin-bottom:3px}
+.sum-value{font-size:19px;font-weight:700;color:#1a1a2e}
+.sum-sub{font-size:11px;color:#aaa;margin-top:2px}
+.sum-value .climb{color:#16a34a}
+.sum-value .drop{color:#dc2626}
+
+/* Config section */
+.config-section{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:800px){.config-section{grid-template-columns:1fr}}
+.config-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.config-card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.icon-gemini{color:#4285f4}
 .icon-naver{color:#03c75a}
-.field-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap}
-.field-row label{font-size:12px;font-weight:600;color:#555;min-width:84px;flex-shrink:0}
-.field-input{flex:1;min-width:120px;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:12px;font-family:monospace;outline:none;transition:border-color .2s;color:#333}
+.field-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.field-row label{font-size:12px;font-weight:600;color:#555;min-width:80px;flex-shrink:0}
+.field-input{flex:1;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:12px;font-family:monospace;outline:none;transition:border-color .2s;color:#333}
 .field-input:focus{border-color:#03c75a}
+.btn-save{background:#1a1a2e;color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-save:hover{background:#2d2d4e}
 .btn-naver{background:#03c75a;color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer}
 .btn-naver:hover{background:#02b350}
 .key-status{font-size:12px;padding:4px 10px;border-radius:8px;display:none;margin-left:8px}
 .key-status.ok{display:inline-block;background:#dcfce7;color:#16a34a}
 .key-status.err{display:inline-block;background:#fee2e2;color:#dc2626}
 .config-hint{font-size:11px;color:#aaa;margin-top:8px;line-height:1.6}
+
+/* CORS proxy */
 .proxy-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 56px 8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;position:relative}
 .proxy-row label{font-size:11px;color:#92400e;font-weight:600;flex:1}
 .proxy-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:inline-block;width:36px;height:20px;cursor:pointer}
@@ -40,133 +76,116 @@ body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;back
 .proxy-toggle input:checked+.proxy-slider{background:#03c75a}
 .proxy-toggle input:checked+.proxy-slider:before{transform:translateX(16px)}
 
-/* ── Control bar ── */
-.control-card{background:linear-gradient(135deg,#1a1a2e 0%,#2d2d4e 100%);border-radius:14px;padding:18px 24px;margin-bottom:18px;box-shadow:0 4px 16px rgba(26,26,46,.18)}
-.ctrl-label{font-size:11px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-.ctrl-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.ctrl-row:last-of-type{margin-bottom:0}
-.ctrl-chip{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);transition:all .15s}
-.ctrl-chip:hover{border-color:rgba(255,255,255,.6);color:#fff}
-.ctrl-chip.active{background:#fff;color:#1a1a2e;border-color:#fff}
-.view-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0}
-.view-chip{padding:8px 18px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);transition:all .15s;position:relative}
-.view-chip:hover{border-color:rgba(255,255,255,.6);color:#fff}
-.view-chip.active{background:#03c75a;color:#fff;border-color:#03c75a}
-.view-chip .soon{font-size:8px;background:rgba(255,255,255,.2);color:#fff;padding:1px 5px;border-radius:6px;margin-left:4px;vertical-align:middle;letter-spacing:.04em}
-.view-chip.active .soon{background:rgba(255,255,255,.25)}
-.ctrl-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
-.soon-panel{background:#fff;border-radius:14px;padding:48px 24px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07);display:none}
-.soon-panel.show{display:block}
-.soon-icon{font-size:40px;margin-bottom:12px}
-.soon-title{font-size:16px;font-weight:800;color:#1a1a2e;margin-bottom:6px}
-.soon-desc{font-size:13px;color:#888;line-height:1.7;max-width:440px;margin:0 auto}
-.soon-tag{display:inline-block;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:12px}
-.btn-analyze{background:#03c75a;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:800;cursor:pointer;transition:all .15s}
-.btn-analyze:hover{background:#02b350}
-.btn-analyze:disabled{background:#555;color:#aaa;cursor:not-allowed}
-.btn-export{background:#fff;color:#1a1a2e;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer}
-.btn-export:hover{background:#f0f0f0}
-.btn-export:disabled{opacity:.4;cursor:not-allowed}
-.ctrl-meta{margin-left:auto;font-size:11px;color:rgba(255,255,255,.5)}
+/* Tabs */
+.tab-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab-btn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#888;transition:all .15s}
+.tab-btn.active{background:#0f172a;color:#fff;border-color:#0f172a}
+.panel{display:none}
+.panel.active{display:block}
 
-/* ── Summary cards ── */
-.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-@media(max-width:700px){.summary-row{grid-template-columns:repeat(2,1fr)}}
-.sum-card{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:none}
-.sum-card.show{display:block}
-.sum-label{font-size:11px;color:#aaa;font-weight:600;margin-bottom:4px}
-.sum-value{font-size:20px;font-weight:800;color:#1a1a2e}
-.sum-value.green{color:#03c75a}
-.sum-sub{font-size:11px;color:#aaa;margin-top:2px}
+/* Card wrap */
+.card-wrap{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow-x:auto}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.card-title{font-size:15px;font-weight:700;color:#1a1a2e}
+.period-tag{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:#fff3cd;color:#856404}
 
-/* ── Status ── */
-.status-bar{text-align:center;padding:13px;font-size:14px;color:#555;background:#fff;border-radius:10px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.05);display:none}
-.status-bar.show{display:block}
+/* Filter tabs */
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.f-tab{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #e8e8e8;background:#f8f8f8;color:#888;transition:all .15s}
+.f-tab.active[data-cat="전체"]{background:#f0f0f8;color:#1a1a2e;border-color:#1a1a2e}
+.f-tab.active[data-cat="패션의류"]{background:#EEF2FF;color:#4F46E5;border-color:#4F46E5}
+.f-tab.active[data-cat="스포츠레저"]{background:#ECFDF5;color:#059669;border-color:#059669}
+.f-tab.active[data-cat="출산육아"]{background:#FFF7ED;color:#EA580C;border-color:#EA580C}
+.f-tab.active[data-cat="패션잡화"]{background:#FDF4FF;color:#9333EA;border-color:#9333EA}
 
-/* ── Results table ── */
-.card-wrap{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow-x:auto;display:none}
-.card-wrap.show{display:block}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.card-title{font-size:16px;font-weight:800;color:#1a1a2e}
-.card-title .accent{color:#03c75a}
-.period-tag{font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px;background:#e6f7ee;color:#03c75a}
-
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:720px}
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 thead tr{border-bottom:2px solid #f0f0f0}
-th{text-align:left;padding:10px 8px;color:#888;font-weight:700;font-size:11px;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+th{text-align:left;padding:8px;color:#aaa;font-weight:600;font-size:11px;white-space:nowrap}
 th.r,td.r{text-align:right}
 th.c,td.c{text-align:center}
 tbody tr{border-bottom:1px solid #f8f8f8;transition:background .12s}
 tbody tr:hover{background:#fafafa}
-td{padding:10px 8px;vertical-align:middle}
+tbody tr.hidden{display:none}
+td{padding:9px 8px;vertical-align:middle}
 
-.rnum{width:26px;height:26px;border-radius:50%;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;flex-shrink:0}
-.rnum.g1{background:#FFD700;color:#7a5c00}
-.rnum.g2{background:#C0C0C0;color:#333}
-.rnum.g3{background:#CD7F32;color:#fff}
+.rnum{width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;flex-shrink:0}
+.rnum.g1{background:#FFD700;color:#7a5c00}.rnum.g2{background:#C0C0C0;color:#333}.rnum.g3{background:#CD7F32;color:#fff}.rnum.hot{background:#fee2e2;color:#dc2626}
 
-.brand-nm{font-weight:700;color:#1a1a2e;font-size:13px}
+.cat-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;display:inline-block;white-space:nowrap}
+.brand-nm{font-weight:600;color:#1a1a2e;font-size:13px}
+.brand-reason{font-size:10px;color:#aaa;margin-top:1px}
+
+.vol-num{font-weight:700;color:#1a1a2e}
+.vol-bar-wrap{display:inline-block;width:60px;height:6px;background:#f0f0f0;border-radius:3px;vertical-align:middle;margin-left:5px;overflow:hidden}
+.vol-bar{height:100%;border-radius:3px;display:block}
+
+/* Rank change badges */
+.rank-change{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:12px;white-space:nowrap}
+.rank-up{background:#dcfce7;color:#16a34a}
+.rank-down{background:#fee2e2;color:#dc2626}
+.rank-same{background:#f0f0f0;color:#aaa}
+.rank-new{background:#e0e7ff;color:#4338ca}
+.rank-change .arrow{font-size:14px}
+
+.trend-up{color:#16a34a;font-weight:700;font-size:11px}
+.trend-down{color:#dc2626;font-weight:700;font-size:11px}
+.trend-flat{color:#aaa;font-weight:700;font-size:11px}
+
+/* Naver column highlights */
 .naver-col{background:#f0faf5}
 th.naver-col{background:#e6f7ee;color:#03c75a}
 .naver-val{font-weight:700;color:#03c75a}
-.total-col{background:#fff8e6}
-th.total-col{background:#fff3cd;color:#b45309}
-.total-val{font-weight:800;color:#b45309;font-size:13px}
-.na{color:#ccc;font-size:11px}
-.comp-low{color:#16a34a;font-weight:600}
-.comp-mid{color:#d97706;font-weight:600}
-.comp-high{color:#dc2626;font-weight:600}
+.naver-na{color:#ccc;font-size:11px}
 
-.vol-bar-wrap{display:inline-block;width:70px;height:6px;background:#f0f0f0;border-radius:3px;vertical-align:middle;margin-left:6px;overflow:hidden}
-.vol-bar{height:100%;border-radius:3px;display:block;background:#03c75a}
+/* Podium */
+.podium-section{margin-bottom:20px}
+.podium-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.podium-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:600px){.podium-row{grid-template-columns:1fr}}
+.podium-card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);text-align:center;position:relative;overflow:hidden}
+.podium-card.p1{border-top:4px solid #FFD700}
+.podium-card.p2{border-top:4px solid #C0C0C0}
+.podium-card.p3{border-top:4px solid #CD7F32}
+.podium-medal{font-size:28px;margin-bottom:6px}
+.podium-name{font-size:16px;font-weight:800;color:#1a1a2e}
+.podium-cat{font-size:11px;margin-top:2px}
+.podium-climb{font-size:22px;font-weight:900;color:#16a34a;margin-top:6px}
+.podium-detail{font-size:11px;color:#888;margin-top:4px}
 
-.quota-warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:11px;color:#9a3412;line-height:1.6}
-.quota-warning b{color:#7c2d12}
-.quota-counter{display:inline-block;background:#fff;border:1px solid #fed7aa;border-radius:6px;padding:2px 8px;font-family:monospace;font-weight:700;color:#9a3412;margin-left:6px}
+/* Category climb grid */
+.cat-climb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:600px){.cat-climb-grid{grid-template-columns:1fr}}
+.cat-climb-item{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px}
+.cat-climb-rank{width:28px;height:28px;border-radius:50%;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#f0f0f0;color:#777}
+.cat-climb-rank.g1{background:#FFD700;color:#7a5c00}
+.cat-climb-rank.g2{background:#C0C0C0;color:#333}
+.cat-climb-rank.g3{background:#CD7F32;color:#fff}
+.cat-climb-body{flex:1;min-width:0}
+.cat-climb-name{font-size:14px;font-weight:700;color:#1a1a2e}
+.cat-climb-stats{display:flex;gap:7px;margin-top:4px;flex-wrap:wrap}
+.stat-chip{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+.sc-climb{background:#dcfce7;color:#16a34a}
+.sc-search{background:#EEF2FF;color:#4F46E5}
+.sc-prev{background:#f5f5f5;color:#999}
 
-/* ── Compare grid ── */
-.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:8px}
-@media(max-width:900px){.compare-grid{grid-template-columns:repeat(2,1fr)}}
-.compare-col{min-width:0}
-.compare-year{font-size:18px;font-weight:800;color:#03c75a;text-align:center;padding:8px 0;background:#e6f7ee;border-radius:8px;margin-bottom:10px}
-.compare-row{display:grid;grid-template-columns:24px 1fr 42px;align-items:center;gap:6px;padding:5px 4px;border-bottom:1px solid #f5f5f5;font-size:11px}
-.compare-row .n{color:#aaa;text-align:right;font-weight:700;font-family:monospace}
-.compare-row.top3 .n{color:#b45309}
-.compare-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#1a1a2e}
-.compare-row .dl{font-size:9px;text-align:right;font-family:monospace;font-weight:700}
-.dl.up{color:#16a34a}
-.dl.down{color:#dc2626}
-.dl.flat{color:#ccc}
-.dl.new{color:#16a34a;background:#dcfce7;padding:1px 4px;border-radius:4px}
+/* Tips */
+.tip-box{background:#f8faff;border:1px solid #e0e7ff;border-radius:12px;padding:16px 18px;margin-top:18px;display:none}
+.tip-box.show{display:block}
+.tip-title{font-size:13px;font-weight:700;color:#3730a3;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.tip-grid{grid-template-columns:1fr}}
+.tip-item{font-size:12px;color:#444;padding:8px 12px;background:#fff;border-radius:8px;border-left:3px solid #6366f1;line-height:1.5}
 
-/* ── Movers ── */
-.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
-@media(max-width:700px){.movers-grid{grid-template-columns:1fr}}
-.movers-col h4{font-size:13px;font-weight:800;padding-bottom:8px;border-bottom:2px solid #f0f0f0;margin-bottom:10px}
-.movers-col.up h4{color:#16a34a;border-bottom-color:#bbf7d0}
-.movers-col.down h4{color:#dc2626;border-bottom-color:#fecaca}
-.mover-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
-.mover-row .nm{font-weight:700;color:#1a1a2e}
-.mover-row .tr{font-family:monospace;font-size:10px;color:#aaa}
-.mover-row .ch{font-family:monospace;font-weight:800;font-size:12px;min-width:40px;text-align:right}
-.mover-row.up .ch{color:#16a34a}
-.mover-row.down .ch{color:#dc2626}
+.footer-note{text-align:center;font-size:11px;color:#ccc;margin-top:20px;padding-bottom:4px}
 
-/* ── Sub tabs (year/month) ── */
-.sub-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;padding:10px 14px;background:#f8f8fa;border-radius:10px}
-.sub-tabs .lbl{font-size:11px;font-weight:700;color:#888;margin-right:6px;align-self:center;text-transform:uppercase;letter-spacing:.06em}
-.sub-tab{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid #e0e0e0;background:#fff;color:#888}
-.sub-tab:hover{color:#1a1a2e}
-.sub-tab.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e}
+.btn-export{background:#0f172a;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-export:hover{background:#1e293b}
 
-/* ── API log ── */
-.api-log{max-height:180px;overflow-y:auto;font-size:11px;color:#666;background:#f8f8f8;border-radius:8px;padding:10px 12px;margin-top:10px;display:none;font-family:monospace;line-height:1.7}
+/* Naver API log */
+.api-log{max-height:160px;overflow-y:auto;font-size:11px;color:#666;background:#f8f8f8;border-radius:8px;padding:8px;margin-top:8px;display:none;font-family:monospace;line-height:1.6}
 .api-log.show{display:block}
-.log-ok{color:#16a34a}
-.log-err{color:#dc2626}
-.log-info{color:#2563eb}
-
-.footer-note{text-align:center;font-size:11px;color:#ccc;margin-top:22px;padding-bottom:4px}
+.log-ok{color:#16a34a}.log-err{color:#dc2626}.log-info{color:#2563eb}
 </style>
 </head>
 <body>
@@ -174,270 +193,270 @@ th.total-col{background:#fff3cd;color:#b45309}
 
   <div class="header">
     <h1>
-      <svg width="34" height="34" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#1a1a2e"/><text x="10" y="26" font-size="22" font-weight="800" fill="#fff" font-family="Arial,sans-serif">L</text></svg>
-      라스트원 백화점 검색 랭킹
+      <svg width="34" height="34" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#0f172a"/><text x="7" y="27" font-size="22" font-weight="800" fill="#4ade80" font-family="Arial,sans-serif">^</text></svg>
+      브랜드 &amp; 카테고리 순위 상승 트래커
     </h1>
-    <p>롯데 · 신세계 · 현대백화점 입점 브랜드 네이버 검색량 TOP 50</p>
+    <p>쿠팡 AI 시뮬레이션 + 네이버 검색광고 API | 월별 순위 변동 분석</p>
   </div>
 
-  <!-- ── API Configs (side-by-side) ── -->
+  <!-- Config: Gemini + Naver API -->
   <div class="config-section">
-
-  <!-- ── Naver Search Ad API Config ── -->  <div class="config-card">
-    <h3><span class="icon-naver">N</span> 네이버 검색광고 API</h3>
-    <div class="field-row">
-      <label>Customer ID</label>
-      <input type="text" class="field-input" id="naverCustomerId" placeholder="예: 1234567" />
-    </div>
-    <div class="field-row">
-      <label>API Key</label>
-      <input type="text" class="field-input" id="naverApiKey" placeholder="예: 010000000..." />
-    </div>
-    <div class="field-row">
-      <label>Secret Key</label>
-      <input type="password" class="field-input" id="naverSecretKey" placeholder="AQAAAA..." />
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <button class="btn-naver" onclick="saveNaverKeys()">저장</button>
-      <button class="btn-naver" style="background:#065f46" onclick="testNaverAPI()">연결 테스트</button>
-      <span class="key-status" id="naverStatus"></span>
+    <div class="config-card">
+      <h3><span class="icon-gemini">&#10022;</span> Gemini API Key</h3>
+      <div class="field-row">
+        <label>API Key</label>
+        <input type="password" class="field-input" id="geminiKey" placeholder="AIza..." />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn-save" onclick="saveGeminiKey()">저장</button>
+        <span class="key-status" id="geminiStatus"></span>
+      </div>
+      <div class="config-hint">
+        키는 브라우저(localStorage)에만 저장됩니다 &middot;
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#4285f4">aistudio.google.com</a>에서 무료 발급
+      </div>
     </div>
 
-    <div class="proxy-row">
-      <label>
-        ⚠️ CORS 프록시 사용 (로컬에서 API 호출 시 필요)<br>
-        <span style="font-size:10px;color:#b45309">브라우저 보안정책으로 직접 호출이 차단될 경우 활성화</span>
-      </label>
-      <label class="proxy-toggle">
-        <input type="checkbox" id="corsProxy" checked>
-        <span class="proxy-slider"></span>
-      </label>
-    </div>
-    <div class="proxy-row" style="margin-top:4px;background:#f0f9ff;border-color:#bae6fd">
-      <label style="color:#0369a1">🔀 프록시 서버 선택</label>
-      <select id="proxySelect" style="padding:4px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:11px;font-weight:600;color:#0369a1;background:#fff;cursor:pointer;outline:none">
-        <option value="auto">자동 (순차 시도)</option>
-        <option value="vercel" selected>Vercel (권장)</option>
-        <option value="local">로컬 (localhost:3100)</option>
-        <option value="corsproxy">corsproxy.io</option>
-        <option value="allorigins">allorigins.win</option>
-        <option value="codetabs">codetabs.com</option>
-      </select>
-    </div>
-
-    <div class="config-hint">
-      <a href="https://searchad.naver.com" target="_blank" style="color:#03c75a">searchad.naver.com</a> →
-      도구 → API 사용 관리에서 발급 · 키는 브라우저(localStorage)에만 저장됩니다
-    </div>
-
-    <div class="api-log" id="naverLog"></div>
-  </div>
-
-  <!-- ── DataLab API Config ── -->
-  <div class="config-card">
-    <h3><span class="icon-naver">✦</span> 네이버 데이터랩 Open API <span style="font-size:10px;color:#888;font-weight:500;margin-left:4px">· 과거 월별 추이 조회용</span></h3>
-    <div class="field-row">
-      <label>Client ID</label>
-      <input type="text" class="field-input" id="datalabClientId" placeholder="developers.naver.com에서 발급" />
-    </div>
-    <div class="field-row">
-      <label>Client Secret</label>
-      <input type="password" class="field-input" id="datalabSecret" placeholder="AAAA..." />
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <button class="btn-naver" onclick="saveDataLabKeys()">저장</button>
-      <button class="btn-naver" style="background:#065f46" onclick="testDataLabAPI()">연결 테스트</button>
-      <span class="key-status" id="datalabStatus"></span>
-    </div>
-
-    <div class="quota-warning">
-      ⚠️ <b>일일 호출 한도 1,000회</b> · 전체 분석 1회(50브랜드 × 1카테고리) ≈ 10회 사용<br>
-      3백화점 × 4카테고리 전부 = 120회 → <b>하루 약 8회 전체 분석 가능</b>
-      <span class="quota-counter">오늘 사용: <span id="quotaUsed">0</span>회</span>
-    </div>
-
-    <div class="config-hint">
-      <a href="https://developers.naver.com/apps" target="_blank" style="color:#03c75a">developers.naver.com/apps</a> → 애플리케이션 등록 → "데이터랩(검색어트렌드)" 권한 선택
-    </div>
-
-    <div class="api-log" id="datalabLog"></div>
-  </div>
-
-  </div><!-- /config-section -->
-
-  <!-- ── Control bar ── -->
-  <div class="control-card">
-    <div class="ctrl-label">백화점</div>
-    <div class="ctrl-row" id="storeTabs"></div>
-
-    <div class="ctrl-label">카테고리</div>
-    <div class="ctrl-row" id="catTabs"></div>
-
-    <div class="ctrl-label">뷰</div>
-    <div class="view-row" id="viewTabs"></div>
-
-    <div class="ctrl-actions">
-      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">🔍 검색량 조회</button>
-      <button class="btn-export" id="exportBtn" onclick="exportCSV()" disabled>📥 CSV 다운로드</button>
-      <span class="ctrl-meta" id="ctrlMeta">네이버 검색광고 API · 월평균 기준</span>
+    <div class="config-card">
+      <h3><span class="icon-naver">N</span> 네이버 검색광고 API</h3>
+      <div class="field-row">
+        <label>Customer ID</label>
+        <input type="text" class="field-input" id="naverCustomerId" placeholder="예: 1234567" />
+      </div>
+      <div class="field-row">
+        <label>API Key</label>
+        <input type="text" class="field-input" id="naverApiKey" placeholder="예: 010000000..." />
+      </div>
+      <div class="field-row">
+        <label>Secret Key</label>
+        <input type="password" class="field-input" id="naverSecretKey" placeholder="AQAAAA..." />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn-naver" onclick="saveNaverKeys()">저장</button>
+        <button class="btn-naver" style="background:#065f46" onclick="testNaverAPI()">연결 테스트</button>
+        <span class="key-status" id="naverStatus"></span>
+      </div>
+      <div class="proxy-row">
+        <label>CORS 프록시 사용 (로컬 HTML에서 API 호출 시 필요)</label>
+        <label class="proxy-toggle">
+          <input type="checkbox" id="corsProxy" checked>
+          <span class="proxy-slider"></span>
+        </label>
+      </div>
+      <div class="proxy-row" style="margin-top:4px;background:#f0f9ff;border-color:#bae6fd">
+        <label style="color:#0369a1">프록시 서버 선택</label>
+        <select id="proxySelect" style="padding:4px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:11px;font-weight:600;color:#0369a1;background:#fff;cursor:pointer;outline:none">
+          <option value="auto">자동 (순차 시도)</option>
+          <option value="vercel" selected>Vercel (권장)</option>
+          <option value="local">로컬 (localhost:3100)</option>
+          <option value="corsproxy">corsproxy.io</option>
+          <option value="allorigins">allorigins.win</option>
+          <option value="codetabs">codetabs.com</option>
+        </select>
+      </div>
+      <div class="config-hint">
+        <a href="https://searchad.naver.com" target="_blank" style="color:#03c75a">searchad.naver.com</a> &rarr;
+        도구 &rarr; API 사용 관리 에서 발급
+      </div>
+      <div class="api-log" id="naverLog"></div>
     </div>
   </div>
 
-  <!-- ── Status bar ── -->
+  <!-- Date banner -->
+  <div class="date-banner">
+    <div class="date-left">
+      <div class="date-label">비교 기간 설정</div>
+      <div class="date-row">
+        <input type="month" id="prevMonth" />
+        <span class="date-vs">vs</span>
+        <input type="month" id="currMonth" />
+      </div>
+      <div class="date-ref" id="refDisplay">이전 월 대비 현재 월 순위 변동 분석</div>
+    </div>
+    <div class="date-right">
+      <span class="badge badge-coupang">쿠팡</span>
+      <span class="badge badge-naver">N 네이버</span>
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">순위 변동 분석</button>
+    </div>
+  </div>
+
   <div class="status-bar" id="statusBar"></div>
 
-  <!-- ── Summary cards ── -->
+  <!-- Summary -->
   <div class="summary-row">
-    <div class="sum-card" id="sc1"><div class="sum-label">조회 브랜드</div><div class="sum-value" id="scBrands">—</div><div class="sum-sub">입점 리스트 기준</div></div>
-    <div class="sum-card" id="sc2"><div class="sum-label">매칭 성공</div><div class="sum-value green" id="scMatched">—</div><div class="sum-sub">네이버 API 응답</div></div>
-    <div class="sum-card" id="sc3"><div class="sum-label">총 검색량</div><div class="sum-value" id="scTotal">—</div><div class="sum-sub">PC + 모바일 합계</div></div>
-    <div class="sum-card" id="sc4"><div class="sum-label">1위 브랜드</div><div class="sum-value" id="scTop" style="font-size:16px">—</div><div class="sum-sub" id="scTopVal">—</div></div>
+    <div class="sum-card" id="sc1"><div class="sum-label">비교 기간</div><div class="sum-value" id="sc1v">-</div><div class="sum-sub">이전 vs 현재</div></div>
+    <div class="sum-card" id="sc2"><div class="sum-label">최대 상승 브랜드</div><div class="sum-value" id="sc2v">-</div><div class="sum-sub" id="sc2s">-</div></div>
+    <div class="sum-card" id="sc3"><div class="sum-label">순위 상승 브랜드 수</div><div class="sum-value" id="sc3v"><span class="climb">-</span></div><div class="sum-sub">전체 대비</div></div>
+    <div class="sum-card" id="sc4"><div class="sum-label">신규 진입 브랜드</div><div class="sum-value" id="sc4v">-</div><div class="sum-sub">이번 달 새로 등장</div></div>
   </div>
 
-  <!-- ── Results table ── -->
-  <div class="card-wrap" id="resultCard">
-    <div class="card-head">
-      <div class="card-title"><span id="resultTitle">—</span> · <span class="accent">TOP 50</span></div>
-      <div class="period-tag" id="periodTag">월평균 검색수</div>
+  <!-- Tabs -->
+  <div class="tab-nav" id="tabNav" style="display:none">
+    <button class="tab-btn active" onclick="switchTab('climbing')">순위 상승 TOP</button>
+    <button class="tab-btn" onclick="switchTab('brand')">브랜드 전체 변동</button>
+    <button class="tab-btn" onclick="switchTab('category')">카테고리 변동</button>
+  </div>
+
+  <!-- Climbing panel (podium + table) -->
+  <div class="panel active" id="panelClimbing">
+    <div class="podium-section" id="podiumSection" style="display:none">
+      <div class="podium-title">순위 상승 TOP 3 브랜드</div>
+      <div class="podium-row" id="podiumRow"></div>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:50px">순위</th>
-          <th>브랜드</th>
-          <th class="r naver-col">PC 검색</th>
-          <th class="r naver-col">모바일 검색</th>
-          <th class="r total-col">총 검색량</th>
-          <th class="c">경쟁정도</th>
-          <th>비중</th>
-        </tr>
-      </thead>
-      <tbody id="resultBody"></tbody>
-    </table>
-  </div>
-
-  <!-- ── Historical view container ── -->
-  <div class="card-wrap" id="historicalCard" style="display:none">
-    <div class="card-head">
-      <div class="card-title"><span id="histTitle">—</span></div>
-      <div class="period-tag" id="histPeriod">2022.01 – 2025.12</div>
+    <div class="card-wrap" id="climbWrap" style="display:none">
+      <div class="card-head">
+        <div class="card-title">순위 상승 브랜드 랭킹</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="period-tag" id="climbPTag"></span>
+          <button class="btn-export" onclick="exportCSV()">CSV 다운로드</button>
+        </div>
+      </div>
+      <div class="filter-tabs" id="climbFilters">
+        <span class="f-tab active" data-cat="전체" onclick="filterClimb('전체')">전체</span>
+        <span class="f-tab" data-cat="패션의류" onclick="filterClimb('패션의류')">패션의류</span>
+        <span class="f-tab" data-cat="스포츠레저" onclick="filterClimb('스포츠레저')">스포츠레저</span>
+        <span class="f-tab" data-cat="출산육아" onclick="filterClimb('출산육아')">출산육아</span>
+        <span class="f-tab" data-cat="패션잡화" onclick="filterClimb('패션잡화')">패션잡화</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>브랜드</th>
+            <th>카테고리</th>
+            <th class="c">순위 변동</th>
+            <th class="c">이전 순위</th>
+            <th class="c">현재 순위</th>
+            <th class="r">이전 검색량</th>
+            <th class="r">현재 검색량</th>
+            <th class="r">검색량 변화</th>
+            <th class="r naver-col">네이버 검색량</th>
+            <th class="c">트렌드</th>
+          </tr>
+        </thead>
+        <tbody id="climbTbody"></tbody>
+      </table>
     </div>
-    <div id="histBody"></div>
   </div>
 
-  <!-- ── Empty state (no data yet for historical views) ── -->
-  <div class="soon-panel" id="soonPanel">
-    <div class="soon-icon">📊</div>
-    <div class="soon-title" id="soonTitle">데이터가 아직 없습니다</div>
-    <div class="soon-desc" id="soonDesc">위의 <b>🔍 과거 데이터 포함 조회</b> 버튼을 눌러 데이터랩 API로 2022~2025 월별 데이터를 조회하세요.<br>조회가 완료되면 이 뷰에 순위가 자동 표시됩니다.</div>
-    <div class="soon-tag">데이터랩 API 호출 필요</div>
+  <!-- Brand full panel -->
+  <div class="panel" id="panelBrand">
+    <div class="card-wrap" id="brandWrap" style="display:none">
+      <div class="card-head">
+        <div class="card-title">브랜드 전체 순위 변동표</div>
+        <span class="period-tag" id="brandPTag"></span>
+      </div>
+      <div class="filter-tabs" id="brandFilters">
+        <span class="f-tab active" data-cat="전체" onclick="filterBrand('전체')">전체</span>
+        <span class="f-tab" data-cat="패션의류" onclick="filterBrand('패션의류')">패션의류</span>
+        <span class="f-tab" data-cat="스포츠레저" onclick="filterBrand('스포츠레저')">스포츠레저</span>
+        <span class="f-tab" data-cat="출산육아" onclick="filterBrand('출산육아')">출산육아</span>
+        <span class="f-tab" data-cat="패션잡화" onclick="filterBrand('패션잡화')">패션잡화</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">현재</th>
+            <th>브랜드</th>
+            <th>카테고리</th>
+            <th class="c">변동</th>
+            <th class="r">이전 검색량</th>
+            <th class="r">현재 검색량</th>
+            <th class="r">증감률</th>
+            <th class="r naver-col">네이버 PC</th>
+            <th class="r naver-col">네이버 모바일</th>
+            <th class="c">트렌드</th>
+          </tr>
+        </thead>
+        <tbody id="brandTbody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="footer-note">© 라스트원 · Naver Search Ad + DataLab API 기반</div>
+  <!-- Category panel -->
+  <div class="panel" id="panelCategory">
+    <div class="card-wrap" id="catWrap" style="display:none">
+      <div class="card-head">
+        <div class="card-title">의류 카테고리 순위 변동</div>
+        <span class="period-tag" id="catPTag"></span>
+      </div>
+      <div class="cat-climb-grid" id="catClimbGrid"></div>
+    </div>
+  </div>
+
+  <div class="tip-box" id="tipBox">
+    <div class="tip-title">이달의 순위 상승 인사이트</div>
+    <div class="tip-grid" id="tipGrid"></div>
+  </div>
+
+  <div class="footer-note" id="footerNote" style="display:none">
+    브랜드 &amp; 카테고리 순위 상승 트래커 &middot; 쿠팡 AI 시뮬레이션 + 네이버 검색광고 API &middot; 실제 수치와 차이 있을 수 있습니다
+  </div>
 </div>
 
 <script>
 /* ═══════════════════════════════════════════
-   Brand Lists: 3 stores × 4 categories × 50
+   Global State
    ═══════════════════════════════════════════ */
-const STORES = ["롯데백화점","신세계백화점","현대백화점"];
-const CATS = ["패션잡화","스포츠레저","패션의류","키즈육아"];
-
-// Base brand pools per category (~50 each)
-const BRAND_POOL = {
-"패션잡화":["MLB","칼하트WIP","쌤소나이트","스탠리","락피쉬웨더웨어","마조네","로우로우","파인드카푸어","무인양품","캠퍼","버켄스탁","크록스","닥터마틴","쿠론","조이그라이슨","루이까또즈","빈치스벤치","덱케","라코스테","빈폴액세서리","헤지스액세서리","질스튜어트","아이아이","슈콤마보니","탠디","소다","미소페","금강제화","에스콰이아","바이폴로","칼린","루즈앤라운지","폴햄","TBJ","베이직하우스","마인드브릿지","지오다노","에잇세컨즈","스파오","탑텐","후아유","마크곤잘레스","커버낫","디스이즈네버댓","예일","비바스튜디오","칸투칸","헤드","훌라","쿠론스포츠"],
-"스포츠레저":["나이키","아디다스","뉴발란스","아식스","호카","온러닝","데상트","휠라","컬럼비아","노스페이스","K2","블랙야크","아크테릭스","파타고니아","룰루레몬","언더아머","푸마","리복","스케쳐스","미즈노","살로몬","머렐","네파","아이더","밀레","마모트","라푸마","오니츠카타이거","반스","컨버스","말본골프","피엘라벤","핑","타이틀리스트","캘러웨이","테일러메이드","마스터바니","사우스케이프","파리게이츠","제이린드버그","와이드앵글","까스텔바작","JDX","볼빅","젝시믹스","안다르","뮬라웨어","폼앤폴리","헤드스포츠","요넥스"],
-"패션의류":["유니클로","자라","COS","마시모두띠","띠어리","마쥬","산드로","아페쎄","폴로랄프로렌","타미힐피거","갭","빈폴","해지스","타임","구호","SJSJ","쥬시쥬디","오브제","오즈세컨","미샤","온앤온","쿠아","더아이잗","듀엘","TNGT","갤럭시","로가디스","마에스트로","캠브리지","앤드지","트루젠","지이크","캘빈클라인","아르마니익스체인지","H&M","에잇세컨즈","스파오","탑텐","아이잗바바","미센스","쥬크","올리비아로렌","모조에스핀","BCBG","띠어리우먼","시스템","시스템옴므","보브","에고이스트","앤클라인"],
-"키즈육아":["뉴발란스키즈","나이키키즈","아디다스키즈","압소바","페리미츠","블루독","알로앤루","리틀그라운드","무냐무냐","마미마지","해피랜드","쁘띠바또","베베드피노","밀리에","아가방","베이비가또","네스닥","아이바나리","오트밀","리바이스키즈","폴로키즈","타미키즈","갭키즈","유니클로키즈","H&M키즈","자라키즈","리틀존","컬리수","제이크루키즈","앙뜨아이","해긴키즈","에뜨와","페어리스","마더구스","크레용하우스","쁘띠엘린","엘르베베","빈폴키즈","해지스키즈","스파오키즈","탑텐키즈","리틀라이더","다이노솔즈","아가방갤러리","꼬망스","릴리펏","밀레니엄베이비","오아시스키즈","컬럼비아키즈","노스페이스키즈"]
+let prevYear, prevMonthNum, currYear, currMonthNum;
+let naverData = {};
+let mergedBrands = []; // final merged data with rank changes
+let mergedCats = [];
+const CAT = {
+  '패션의류':   {bar:'#4F46E5',bg:'#EEF2FF',text:'#4F46E5'},
+  '스포츠레저': {bar:'#059669',bg:'#ECFDF5',text:'#059669'},
+  '출산육아':   {bar:'#EA580C',bg:'#FFF7ED',text:'#EA580C'},
+  '패션잡화':   {bar:'#9333EA',bg:'#FDF4FF',text:'#9333EA'},
 };
-// Per-store brand list (phase 1: all stores share the same pool; refine later)
-const BRANDS = {};
-for(const st of STORES){BRANDS[st]={};for(const c of CATS){BRANDS[st][c]=[...BRAND_POOL[c]];}}
 
 /* ═══════════════════════════════════════════
-   State
+   Date Init
    ═══════════════════════════════════════════ */
-let activeStore = "롯데백화점";
-let activeCat = "패션잡화";
-let activeView = "current";
-let activeYear = 2025;
-let activeMonth = 0; // 0-11
-let lastResult = null;    // 현재월 결과 {store, cat, rows}
-let histCache = {};       // 히스토리컬 캐시 {store: {cat: {brands:[...], fetchedAt}}}
-
-const VIEWS = [
-  {id:"current",    label:"현재 월 TOP 50",  historical:false},
-  {id:"cumulative", label:"4년 누적 TOP 50", historical:true},
-  {id:"compare",    label:"연도별 비교",      historical:true},
-  {id:"monthly",    label:"월별 상세",        historical:true},
-  {id:"movers",     label:"급상승·급하락",    historical:true}
-];
+function initDate(){
+  const now = new Date();
+  const cm = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const prev = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const pm = prev.getFullYear() + '-' + String(prev.getMonth()+1).padStart(2,'0');
+  document.getElementById('currMonth').value = cm;
+  document.getElementById('prevMonth').value = pm;
+  applyDates();
+}
+function applyDates(){
+  const cv = document.getElementById('currMonth').value;
+  const pv = document.getElementById('prevMonth').value;
+  if(cv && pv){
+    const [cy,cm] = cv.split('-').map(Number);
+    const [py,pm] = pv.split('-').map(Number);
+    currYear=cy; currMonthNum=cm; prevYear=py; prevMonthNum=pm;
+    document.getElementById('refDisplay').textContent = `${prevYear}년 ${prevMonthNum}월 → ${currYear}년 ${currMonthNum}월 순위 변동 분석`;
+  }
+}
+document.getElementById('currMonth').addEventListener('change', applyDates);
+document.getElementById('prevMonth').addEventListener('change', applyDates);
+initDate();
 
 /* ═══════════════════════════════════════════
-   Tab rendering
+   Key Storage (Gemini)
    ═══════════════════════════════════════════ */
-function renderTabs(){
-  const st = document.getElementById("storeTabs");
-  st.innerHTML = STORES.map(s=>`<button class="ctrl-chip ${s===activeStore?'active':''}" data-s="${s}">${s}</button>`).join("");
-  st.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeStore=b.dataset.s;renderTabs();switchView();});
-  const ct = document.getElementById("catTabs");
-  ct.innerHTML = CATS.map(c=>`<button class="ctrl-chip ${c===activeCat?'active':''}" data-c="${c}">${c}</button>`).join("");
-  ct.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeCat=b.dataset.c;renderTabs();switchView();});
-  const vt = document.getElementById("viewTabs");
-  vt.innerHTML = VIEWS.map(v=>`<button class="view-chip ${v.id===activeView?'active':''}" data-v="${v.id}">${v.label}</button>`).join("");
-  vt.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeView=b.dataset.v;renderTabs();switchView();});
-  // Analyze button label
-  const btn=document.getElementById("analyzeBtn");
-  const v=VIEWS.find(x=>x.id===activeView);
-  btn.textContent = v.historical ? "🔍 과거 데이터 포함 조회" : "🔍 검색량 조회";
+function getGeminiKey(){ return localStorage.getItem('lo_geminiKey')||''; }
+function saveGeminiKey(){
+  const k=document.getElementById('geminiKey').value.trim(), st=document.getElementById('geminiStatus');
+  if(!k.startsWith('AIza')){st.className='key-status err';st.textContent='AIza로 시작해야 합니다';return}
+  localStorage.setItem('lo_geminiKey',k);
+  st.className='key-status ok';st.textContent='저장됨';
+  document.getElementById('geminiKey').value='';
+  setTimeout(()=>st.style.display='none',3000);
 }
-renderTabs();
-
-function switchView(){
-  const view = VIEWS.find(v=>v.id===activeView);
-  const resultCard = document.getElementById("resultCard");
-  const histCard = document.getElementById("historicalCard");
-  const soonPanel = document.getElementById("soonPanel");
-
-  // Hide all result panels
-  resultCard.classList.remove("show");
-  histCard.style.display="none";
-  soonPanel.classList.remove("show");
-  document.querySelectorAll(".sum-card").forEach(c=>c.classList.remove("show"));
-
-  if(!view.historical){
-    // Current month view
-    if(lastResult && lastResult.store===activeStore && lastResult.cat===activeCat){
-      renderResults();
-    }
-    return;
-  }
-
-  // Historical view
-  const cached = histCache[activeStore]?.[activeCat];
-  if(!cached){
-    document.getElementById("soonTitle").textContent = view.label + " — 데이터 없음";
-    soonPanel.classList.add("show");
-    return;
-  }
-
-  // Render historical view
-  histCard.style.display="block";
-  document.getElementById("histTitle").textContent = `${activeStore} · ${activeCat} · ${view.label}`;
-  if(activeView==="cumulative") renderCumulative(cached.brands);
-  else if(activeView==="compare") renderCompare(cached.brands);
-  else if(activeView==="monthly") renderMonthly(cached.brands);
-  else if(activeView==="movers") renderMovers(cached.brands);
-}
+(function(){if(getGeminiKey()){const s=document.getElementById('geminiStatus');s.className='key-status ok';s.textContent='저장됨'}})();
 
 /* ═══════════════════════════════════════════
-   Naver API Keys (localStorage)
+   Key Storage (Naver)
    ═══════════════════════════════════════════ */
 function getNaverKeys(){
   return {
     customerId: localStorage.getItem('lo_naverCustId')||'',
-    apiKey: localStorage.getItem('lo_naverApiKey')||'',
-    secretKey: localStorage.getItem('lo_naverSecret')||''
+    apiKey:     localStorage.getItem('lo_naverApiKey')||'',
+    secretKey:  localStorage.getItem('lo_naverSecret')||''
   };
 }
 function saveNaverKeys(){
@@ -445,36 +464,25 @@ function saveNaverKeys(){
   const ak=document.getElementById('naverApiKey').value.trim();
   const sk=document.getElementById('naverSecretKey').value.trim();
   const st=document.getElementById('naverStatus');
-  if(cid)localStorage.setItem('lo_naverCustId',cid);
-  if(ak)localStorage.setItem('lo_naverApiKey',ak);
-  if(sk)localStorage.setItem('lo_naverSecret',sk);
+  if(!cid||!ak||!sk){st.className='key-status err';st.textContent='3개 항목 모두 입력하세요';return}
+  localStorage.setItem('lo_naverCustId',cid);
+  localStorage.setItem('lo_naverApiKey',ak);
+  localStorage.setItem('lo_naverSecret',sk);
+  st.className='key-status ok';st.textContent='저장됨';
   document.getElementById('naverCustomerId').value='';
   document.getElementById('naverApiKey').value='';
   document.getElementById('naverSecretKey').value='';
-  const keys=getNaverKeys();
-  if(keys.customerId&&keys.apiKey&&keys.secretKey){
-    st.className='key-status ok';st.textContent='✅ 저장됨';
-  } else {
-    st.className='key-status err';st.textContent='⚠️ 일부 누락';
-  }
+  setTimeout(()=>st.style.display='none',3000);
 }
-// Show saved status on load
-window.addEventListener('load',()=>{
-  const keys=getNaverKeys();
-  if(keys.customerId&&keys.apiKey&&keys.secretKey){
-    const st=document.getElementById('naverStatus');
-    st.className='key-status ok';st.textContent='✅ 저장됨';
+(function(){
+  const n=getNaverKeys();
+  if(n.customerId&&n.apiKey&&n.secretKey){
+    const s=document.getElementById('naverStatus');s.className='key-status ok';s.textContent='저장됨';
   }
-  const dk=getDataLabKeys();
-  if(dk.clientId&&dk.clientSecret){
-    const st=document.getElementById('datalabStatus');
-    st.className='key-status ok';st.textContent='✅ 저장됨';
-  }
-  refreshQuotaDisplay();
-});
+})();
 
 /* ═══════════════════════════════════════════
-   HMAC-SHA256 signature (reused from original)
+   Naver API (from original code)
    ═══════════════════════════════════════════ */
 async function generateSignature(secretKey, timestamp, method, uri){
   const message = `${timestamp}.${method}.${uri}`;
@@ -502,476 +510,499 @@ const PROXY_LIST = [
   { name:'allorigins', wrap: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, headersOk:false },
   { name:'codetabs',   wrap: (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, headersOk:false },
 ];
+
 function getSelectedProxies(){
-  const sel=document.getElementById('proxySelect').value;
+  const sel = document.getElementById('proxySelect').value;
   if(sel==='auto') return [...PROXY_LIST];
-  const found=PROXY_LIST.find(p=>p.name===sel);
-  return found?[found]:[...PROXY_LIST];
+  const found = PROXY_LIST.find(p=>p.name===sel);
+  return found ? [found] : [...PROXY_LIST];
 }
 
-/* ═══════════════════════════════════════════
-   callNaverKeywordAPI (reused)
-   ═══════════════════════════════════════════ */
 async function callNaverKeywordAPI(keywords){
   const {customerId, apiKey, secretKey} = getNaverKeys();
-  if(!customerId||!apiKey||!secretKey){
-    naverLog('⚠️ 네이버 API 키가 설정되지 않았습니다','log-err');
-    return null;
-  }
-  const method='GET';
-  const uri='/keywordstool';
-  const hintKeywords=keywords.join(',');
-  const baseUrl=`https://api.searchad.naver.com${uri}?hintKeywords=${encodeURIComponent(hintKeywords)}&showDetail=1`;
+  if(!customerId||!apiKey||!secretKey){ naverLog('네이버 API 키 미설정','log-err'); return null; }
+
+  const method = 'GET';
+  const uri = '/keywordstool';
+  const hintKeywords = keywords.join(',');
+  const baseUrl = `https://api.searchad.naver.com${uri}?hintKeywords=${encodeURIComponent(hintKeywords)}&showDetail=1`;
 
   if(!useProxy()){
-    const timestamp=String(Date.now());
-    const signature=await generateSignature(secretKey,timestamp,method,uri);
-    const headers={'X-Timestamp':timestamp,'X-API-KEY':apiKey,'X-Customer':customerId,'X-Signature':signature};
-    try{
-      const res=await fetch(baseUrl,{method:'GET',headers});
-      if(!res.ok){naverLog(`❌ API 오류 (${res.status}): ${(await res.text()).slice(0,120)}`,'log-err');return null;}
+    const timestamp = String(Date.now());
+    const signature = await generateSignature(secretKey, timestamp, method, uri);
+    const headers = { 'X-Timestamp':timestamp, 'X-API-KEY':apiKey, 'X-Customer':customerId, 'X-Signature':signature };
+    try {
+      const res = await fetch(baseUrl, { method:'GET', headers });
+      if(!res.ok){ naverLog(`API 오류 (${res.status})`,'log-err'); return null; }
       return await res.json();
-    }catch(e){
-      naverLog(`❌ 직접 호출 실패: ${e.message} → CORS 프록시를 켜보세요.`,'log-err');
-      return null;
-    }
+    } catch(e){ naverLog(`직접 호출 실패: ${e.message}`,'log-err'); return null; }
   }
 
-  const proxies=getSelectedProxies();
-  for(let i=0;i<proxies.length;i++){
-    const proxy=proxies[i];
-    const timestamp=String(Date.now());
-    const signature=await generateSignature(secretKey,timestamp,method,uri);
-    const headers={'X-Timestamp':timestamp,'X-API-KEY':apiKey,'X-Customer':customerId,'X-Signature':signature};
-    const proxyUrl=proxy.headersOk==='viaUrl'?proxy.wrap(baseUrl,headers):proxy.wrap(baseUrl);
-    naverLog(`🔀 프록시 시도 ${i+1}/${proxies.length}: ${proxy.name}`,'log-info');
-    try{
-      const fetchOpts={method:'GET'};
-      if(proxy.headersOk===true) fetchOpts.headers=headers;
-      const timeoutPromise=new Promise((_,reject)=>setTimeout(()=>reject(new Error('시간 초과(8초)')),8000));
-      const res=await Promise.race([fetch(proxyUrl,fetchOpts),timeoutPromise]);
-      if(!res.ok){
-        const errText=await res.text();
-        naverLog(`  ⚠️ ${proxy.name} 응답 오류 (${res.status}): ${errText.slice(0,80)}`,'log-err');
-        continue;
-      }
-      const data=await res.json();
-      if(data&&(data.keywordList||Array.isArray(data))){
-        naverLog(`  ✅ ${proxy.name} 성공!`,'log-ok');
-        return data;
-      }else{
-        naverLog(`  ⚠️ ${proxy.name} 유효하지 않은 응답`,'log-err');
-        continue;
-      }
-    }catch(e){
-      naverLog(`  ⚠️ ${proxy.name} 실패: ${e.message}`,'log-err');
-      continue;
-    }
+  const proxies = getSelectedProxies();
+  for(let i=0; i<proxies.length; i++){
+    const proxy = proxies[i];
+    const timestamp = String(Date.now());
+    const signature = await generateSignature(secretKey, timestamp, method, uri);
+    const headers = { 'X-Timestamp':timestamp, 'X-API-KEY':apiKey, 'X-Customer':customerId, 'X-Signature':signature };
+    const proxyUrl = proxy.headersOk==='viaUrl' ? proxy.wrap(baseUrl, headers) : proxy.wrap(baseUrl);
+    naverLog(`프록시 시도 ${i+1}/${proxies.length}: ${proxy.name}`, 'log-info');
+    try {
+      const fetchOpts = { method:'GET' };
+      if(proxy.headersOk===true) fetchOpts.headers = headers;
+      const timeoutPromise = new Promise((_,reject) => setTimeout(()=>reject(new Error('시간 초과')), 8000));
+      const res = await Promise.race([ fetch(proxyUrl, fetchOpts), timeoutPromise ]);
+      if(!res.ok){ naverLog(`${proxy.name} 오류 (${res.status})`,'log-err'); continue; }
+      const data = await res.json();
+      if(data && (data.keywordList || Array.isArray(data))){ naverLog(`${proxy.name} 성공!`,'log-ok'); return data; }
+      else { naverLog(`${proxy.name} 유효하지 않은 응답`,'log-err'); continue; }
+    } catch(e){ naverLog(`${proxy.name} 실패: ${e.message}`,'log-err'); continue; }
   }
-  naverLog('❌ 모든 프록시 시도 실패','log-err');
+  naverLog('모든 프록시 시도 실패','log-err');
   return null;
 }
 
-/* ═══════════════════════════════════════════
-   Test Naver API
-   ═══════════════════════════════════════════ */
+async function fetchNaverDataForBrands(brandNames){
+  naverData = {};
+  const {customerId} = getNaverKeys();
+  if(!customerId){ naverLog('네이버 API 미설정 - 쿠팡 데이터만 표시','log-info'); return; }
+  naverLog('네이버 검색광고 API 키워드 조회 시작...','log-info');
+
+  const CHUNK = 5;
+  const chunks = [];
+  for(let i=0;i<brandNames.length;i+=CHUNK) chunks.push(brandNames.slice(i,i+CHUNK));
+
+  let totalFound = 0;
+  for(let ci=0;ci<chunks.length;ci++){
+    const chunk = chunks[ci];
+    naverLog(`요청 ${ci+1}/${chunks.length}: [${chunk.join(', ')}]`,'log-info');
+    const data = await callNaverKeywordAPI(chunk);
+    if(data && data.keywordList){
+      for(const item of data.keywordList){
+        const kw = item.relKeyword || item.keyword || '';
+        const matchedBrand = chunk.find(b => kw===b || kw.toLowerCase()===b.toLowerCase() || kw.replace(/\s/g,'')===b.replace(/\s/g,''));
+        if(matchedBrand){
+          const pc = parseInt(item.monthlyPcQcCnt)||0;
+          const mo = parseInt(item.monthlyMobileQcCnt)||0;
+          naverData[matchedBrand] = {
+            pcSearch: pc===-1?0:pc, mobileSearch: mo===-1?0:mo,
+            totalSearch: (pc===-1?0:pc)+(mo===-1?0:mo),
+            clicks: parseInt(item.monthlyAvePcClkCnt||0)+parseInt(item.monthlyAveMobileClkCnt||0),
+            competition: item.compIdx || '-'
+          };
+          totalFound++;
+          naverLog(`  ${matchedBrand}: PC ${naverData[matchedBrand].pcSearch.toLocaleString()} / 모바일 ${naverData[matchedBrand].mobileSearch.toLocaleString()}`,'log-ok');
+        }
+      }
+    }
+    if(ci < chunks.length-1) await new Promise(r=>setTimeout(r, 300));
+  }
+  naverLog(`네이버 API 조회 완료: ${totalFound}/${brandNames.length}개 매칭`,'log-ok');
+}
+
 async function testNaverAPI(){
   const st=document.getElementById('naverStatus');
-  st.className='key-status';st.style.display='inline-block';
-  st.textContent='⏳ 테스트 중...';st.style.background='#fef3c7';st.style.color='#92400e';
+  st.className='key-status';st.style.display='inline-block';st.textContent='테스트 중...';st.style.background='#fef3c7';st.style.color='#92400e';
   document.getElementById('naverLog').innerHTML='';
-  naverLog('🔄 네이버 API 연결 테스트 (키워드: "나이키")','log-info');
-  const data=await callNaverKeywordAPI(['나이키']);
-  if(data&&data.keywordList){
-    st.className='key-status ok';st.textContent='✅ 정상';
-    naverLog(`✅ 연결 성공! ${data.keywordList.length}개 키워드 응답`,'log-ok');
-  }else{
-    st.className='key-status err';st.textContent='❌ 실패';
-    naverLog('❌ 연결 실패 — 키/프록시 확인','log-err');
+  naverLog('네이버 API 연결 테스트 시작 (키워드: "나이키")', 'log-info');
+  const data = await callNaverKeywordAPI(['나이키']);
+  if(data && data.keywordList && data.keywordList.length > 0){
+    st.className='key-status ok'; st.textContent=`연결 성공 (${data.keywordList.length}개 결과)`;
+    naverLog(`테스트 성공! ${data.keywordList.length}개 연관 키워드 반환됨`,'log-ok');
+  } else {
+    st.className='key-status err'; st.textContent='연결 실패';
   }
 }
 
 /* ═══════════════════════════════════════════
-   DataLab API (Open API · Client ID/Secret)
+   Gemini API
    ═══════════════════════════════════════════ */
-function getDataLabKeys(){
-  return {
-    clientId: localStorage.getItem('lo_datalabClientId')||'',
-    clientSecret: localStorage.getItem('lo_datalabSecret')||''
-  };
-}
-function saveDataLabKeys(){
-  const cid=document.getElementById('datalabClientId').value.trim();
-  const cs=document.getElementById('datalabSecret').value.trim();
-  const st=document.getElementById('datalabStatus');
-  if(cid)localStorage.setItem('lo_datalabClientId',cid);
-  if(cs)localStorage.setItem('lo_datalabSecret',cs);
-  document.getElementById('datalabClientId').value='';
-  document.getElementById('datalabSecret').value='';
-  const k=getDataLabKeys();
-  if(k.clientId&&k.clientSecret){
-    st.className='key-status ok';st.textContent='✅ 저장됨';
-  }else{
-    st.className='key-status err';st.textContent='⚠️ 일부 누락';
-  }
+async function callGeminiAPI(prompt){
+  const apiKey=getGeminiKey();
+  if(!apiKey) throw new Error('Gemini API 키를 먼저 입력하고 저장해주세요');
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const res=await fetch(url,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:"application/json"}})
+  });
+  const data=await res.json();
+  if(!res.ok) throw new Error(data.error?.message||'Gemini API 요청 오류');
+  const txt=data.candidates[0].content.parts[0].text;
+  try{return JSON.parse(txt)}catch(e){return robustParse(txt)}
 }
 
-function datalabLog(msg, cls=''){
-  const el=document.getElementById('datalabLog');
-  el.classList.add('show');
-  el.innerHTML+=`<div class="${cls}">${new Date().toLocaleTimeString()} ${msg}</div>`;
-  el.scrollTop=el.scrollHeight;
+function robustParse(raw){
+  try{return JSON.parse(raw)}catch(e){}
+  let s=raw.replace(/,\s*([\}\]])/g,'$1');
+  try{return JSON.parse(s)}catch(e){}
+  s=s.replace(/"reason"\s*:\s*"((?:[^"\\]|\\.)*)"/g,(m,p1)=>'"reason":"'+p1.replace(/"/g,"'")+'"');
+  try{return JSON.parse(s)}catch(e){}
+  const opens=(s.match(/\[/g)||[]).length-(s.match(/\]/g)||[]).length;
+  const openb=(s.match(/\{/g)||[]).length-(s.match(/\}/g)||[]).length;
+  s=s.replace(/,\s*$/,'').replace(/,\s*\{[^\{\}]*$/,'');
+  s+=']'.repeat(Math.max(opens,0))+'}'.repeat(Math.max(openb,0));
+  try{return JSON.parse(s)}catch(e){throw new Error('JSON 복구 실패: '+e.message)}
 }
 
-// 일일 할당량 카운터 (localStorage, 날짜별 리셋)
-function getQuotaUsed(){
-  const today=new Date().toISOString().slice(0,10);
-  const saved=JSON.parse(localStorage.getItem('lo_datalabQuota')||'{}');
-  return saved.date===today?(saved.count||0):0;
-}
-function incrementQuota(n=1){
-  const today=new Date().toISOString().slice(0,10);
-  const count=getQuotaUsed()+n;
-  localStorage.setItem('lo_datalabQuota',JSON.stringify({date:today,count}));
-  document.getElementById('quotaUsed').textContent=count;
-}
-function refreshQuotaDisplay(){
-  document.getElementById('quotaUsed').textContent=getQuotaUsed();
+function seasonHint(m){
+  return({1:'겨울 세일/설 선물',2:'설 연휴/봄 예열',3:'봄 시즌 시작/아우터→봄 신상',4:'봄 피크/아웃도어 급증',5:'어린이날/어버이날/가정의달 선물',6:'초여름/여름 의류',7:'여름 피크/수영복/휴가용품',8:'여름 후반/개학/가을 예열',9:'가을 시작/아웃도어',10:'가을 피크/아우터/트렌치',11:'블프/겨울 준비/패딩',12:'연말/크리스마스/선물'})[m]||'';
 }
 
-async function callDataLabAPI(keywords, startDate="2022-01-01", endDate="2025-12-31"){
-  const k=getDataLabKeys();
-  if(!k.clientId||!k.clientSecret){
-    datalabLog('⚠️ 데이터랩 API 키가 설정되지 않았습니다','log-err');
-    return null;
-  }
-  const url='https://openapi.naver.com/v1/datalab/search';
-  const headers={
-    'X-Naver-Client-Id':k.clientId,
-    'X-Naver-Client-Secret':k.clientSecret,
-    'Content-Type':'application/json'
-  };
-  const body={
-    startDate, endDate,
-    timeUnit:'month',
-    keywordGroups: keywords.slice(0,5).map(kw=>({groupName:kw, keywords:[kw]}))
-  };
-
-  // Vercel 프록시를 통해 POST
-  const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`;
-  try{
-    const res=await fetch(proxyUrl,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    incrementQuota(1);
-    if(!res.ok){
-      const err=await res.text();
-      datalabLog(`❌ API 오류 (${res.status}): ${err.slice(0,120)}`,'log-err');
-      return null;
-    }
-    return await res.json();
-  }catch(e){
-    datalabLog(`❌ 호출 실패: ${e.message}`,'log-err');
-    return null;
-  }
-}
-
-async function testDataLabAPI(){
-  const st=document.getElementById('datalabStatus');
-  st.className='key-status';st.style.display='inline-block';
-  st.textContent='⏳ 테스트 중...';st.style.background='#fef3c7';st.style.color='#92400e';
-  document.getElementById('datalabLog').innerHTML='';
-  datalabLog('🔄 데이터랩 API 연결 테스트 (키워드: "나이키")','log-info');
-  const data=await callDataLabAPI(['나이키']);
-  if(data&&data.results&&data.results.length){
-    st.className='key-status ok';st.textContent='✅ 정상';
-    const points=data.results[0].data?.length||0;
-    datalabLog(`✅ 연결 성공! ${points}개월 데이터 수신`,'log-ok');
-  }else{
-    st.className='key-status err';st.textContent='❌ 실패';
-    datalabLog('❌ 연결 실패 — 키/권한/프록시 확인','log-err');
-  }
-}
-
-/* Merge: 검색광고 절대값 × 데이터랩 월별 비율 → 48개월 절대치 */
-function mergeBrandMonthly(brandName, searchAdData, datalabSeries){
-  const currentAbs = searchAdData ? (searchAdData.pc+searchAdData.mo) : 0;
-  const monthly = new Array(48).fill(0);
-  if(datalabSeries && datalabSeries.length){
-    datalabSeries.forEach(pt=>{
-      const d=new Date(pt.period);
-      const y=d.getFullYear();
-      const m=d.getMonth();
-      const idx=(y-2022)*12+m;
-      if(idx>=0&&idx<48) monthly[idx]=pt.ratio;
-    });
-  }
-  // 최신 비-0 지점을 앵커로 스케일링
-  let anchorIdx=47;
-  while(anchorIdx>=0 && monthly[anchorIdx]===0) anchorIdx--;
-  let scaled;
-  if(anchorIdx>=0 && monthly[anchorIdx]>0 && currentAbs>0){
-    const scale = currentAbs / monthly[anchorIdx];
-    scaled = monthly.map(v=>Math.round(v*scale));
-  }else{
-    scaled = monthly.slice();
-  }
-  const yearly=[0,1,2,3].map(y=>scaled.slice(y*12,y*12+12).reduce((a,b)=>a+b,0));
-  return {
-    name: brandName,
-    pc: searchAdData?.pc||0,
-    mo: searchAdData?.mo||0,
-    current: currentAbs,
-    monthly: scaled,
-    yearly,
-    total: yearly.reduce((a,b)=>a+b,0)
-  };
-}
+/* ═══════════════════════════════════════════
+   Main Analyze Flow
+   ═══════════════════════════════════════════ */
 async function analyze(){
-  const keys=getNaverKeys();
-  if(!keys.customerId||!keys.apiKey||!keys.secretKey){
-    setStatus('⚠️ 먼저 네이버 검색광고 API 키를 저장해주세요','err');
+  applyDates();
+  const btn=document.getElementById('analyzeBtn');
+  btn.disabled=true;
+  const sb=document.getElementById('statusBar');
+  sb.className='status-bar show';
+
+  // Reset UI
+  ['sc1','sc2','sc3','sc4'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  ['climbWrap','brandWrap','catWrap'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('podiumSection').style.display='none';
+  document.getElementById('tabNav').style.display='none';
+  document.getElementById('tipBox').classList.remove('show');
+  document.getElementById('footerNote').style.display='none';
+  document.getElementById('naverLog').innerHTML='';
+  document.getElementById('naverLog').classList.remove('show');
+
+  /* Step 1: Gemini - get both months data */
+  sb.textContent=`[1/3] Gemini AI: ${prevYear}년 ${prevMonthNum}월 데이터 분석 중...`;
+
+  const buildPrompt = (year, month) => `한국 이커머스 MD 전문가. 분석기준: ${year}년 ${month}월. 시즌: ${seasonHint(month)}.
+네이버 데이터랩 쇼핑인사이트 트렌드를 기반으로 ${year-3}년/${year-2}년/${year-1}년 ${month}월 3개년 가중평균(최신연도 비중 높게) 분석.
+브랜드는 패션의류/스포츠레저/출산육아/패션잡화 중에서만 선정. reason은 10자 이내, 따옴표 금지.
+searchVol/salesEst는 3개년 추세 반영한 현실적 정수. JSON만 반환:
+{"month":"${year}-${String(month).padStart(2,'0')}","brands":[{"rank":1,"name":"브랜드명","category":"패션의류","searchVol":170000,"salesEst":20000,"trend":"상승","reason":"시즌급증"},...총20개],"categories":[{"rank":1,"name":"카테고리명","searchVol":180000,"salesEst":25000,"trend":"상승","reason":"시즌급증"},...총10개],"tips":["인사이트1","인사이트2","인사이트3","인사이트4"]}
+규칙: brands 20개, categories 10개 정확히 반환. rank는 1부터 순서대로. 같은 브랜드명이 두 달에 걸쳐 일관되게 나와야 비교가 가능함. 한국 시장에서 실제 인기있는 브랜드를 사용할 것 (나이키, 아디다스, 뉴발란스, 유니클로, 자라, MLB, 디스커버리, 노스페이스, 무인양품, 컨버스, 푸마, 휠라, 폴로, 캘빈클라인, 구찌, 반스, 리복, 아식스, 살로몬, 호카, 카터스, 모이몰른, 에잇세컨즈, 탑텐, 스파오, 미니멀프로젝트, 쏘리투머치러브, 코닥어패럴, 내셔널지오그래픽 등).`;
+
+  let prevData, currData;
+  try {
+    prevData = await callGeminiAPI(buildPrompt(prevYear, prevMonthNum));
+    sb.textContent=`[2/3] Gemini AI: ${currYear}년 ${currMonthNum}월 데이터 분석 중...`;
+    currData = await callGeminiAPI(buildPrompt(currYear, currMonthNum));
+  } catch(e){
+    sb.textContent='Gemini 오류: '+e.message;
+    btn.disabled=false;
     return;
   }
 
-  const view = VIEWS.find(v=>v.id===activeView);
-  const needsHistorical = view.historical;
+  /* Step 2: Naver API */
+  const allBrandNames = [...new Set([
+    ...(currData.brands||[]).map(b=>b.name),
+    ...(prevData.brands||[]).map(b=>b.name)
+  ])];
 
-  if(needsHistorical){
-    const dk=getDataLabKeys();
-    if(!dk.clientId||!dk.clientSecret){
-      setStatus('⚠️ 과거 데이터 조회를 위해 데이터랩 API 키도 저장해주세요','err');
-      return;
-    }
+  const {customerId} = getNaverKeys();
+  if(customerId){
+    sb.textContent=`[3/3] 네이버 검색광고 API에서 ${allBrandNames.length}개 브랜드 키워드 조회 중...`;
+    await fetchNaverDataForBrands(allBrandNames);
   }
 
-  const brandList = BRANDS[activeStore][activeCat];
-  const btn=document.getElementById('analyzeBtn');
-  btn.disabled=true;btn.textContent='⏳ 조회 중...';
-  document.getElementById('naverLog').innerHTML='';
-  if(needsHistorical) document.getElementById('datalabLog').innerHTML='';
-  setStatus(`${activeStore} · ${activeCat} · ${brandList.length}개 브랜드 조회 시작...`,'info');
+  /* Step 3: Merge & compute rank changes */
+  mergedBrands = computeBrandRankChanges(prevData.brands||[], currData.brands||[]);
+  mergedCats = computeCatRankChanges(prevData.categories||[], currData.categories||[]);
 
-  // ── 1) 검색광고 API: 현재 월 절대 검색수 ──
-  const searchAdResults = {};
-  const CHUNK=5;
-  for(let i=0;i<brandList.length;i+=CHUNK){
-    const chunk=brandList.slice(i,i+CHUNK);
-    naverLog(`📡 SearchAd ${Math.floor(i/CHUNK)+1}/${Math.ceil(brandList.length/CHUNK)}: [${chunk.join(', ')}]`,'log-info');
-    const data=await callNaverKeywordAPI(chunk);
-    if(data&&data.keywordList){
-      for(const item of data.keywordList){
-        const kw=(item.relKeyword||item.keyword||'').trim();
-        const matched=chunk.find(b=>
-          kw===b||kw.toLowerCase()===b.toLowerCase()||kw.replace(/\s/g,'')===b.replace(/\s/g,'')
-        );
-        if(matched&&!searchAdResults[matched]){
-          const pc=parseInt(item.monthlyPcQcCnt)||0;
-          const mo=parseInt(item.monthlyMobileQcCnt)||0;
-          searchAdResults[matched]={
-            pc: pc===-1?0:pc,
-            mo: mo===-1?0:mo,
-            total: (pc===-1?0:pc)+(mo===-1?0:mo),
-            comp: item.compIdx||'—'
-          };
-        }
-      }
-    }
-    setStatus(`검색광고 조회 중... ${Math.min(i+CHUNK,brandList.length)}/${brandList.length}`,'info');
-    if(i+CHUNK<brandList.length) await new Promise(r=>setTimeout(r,300));
-  }
+  // Sort by climb amount (descending)
+  const climbSorted = [...mergedBrands].sort((a,b) => {
+    // NEW entries first, then by climb desc
+    if(a.isNew && !b.isNew) return -1;
+    if(!a.isNew && b.isNew) return 1;
+    return b.rankChange - a.rankChange;
+  });
 
-  // ── 2) 데이터랩 API: 과거 월별 추이 (필요시) ──
-  if(needsHistorical){
-    const datalabSeries = {};
-    for(let i=0;i<brandList.length;i+=CHUNK){
-      const chunk=brandList.slice(i,i+CHUNK);
-      datalabLog(`📡 DataLab ${Math.floor(i/CHUNK)+1}/${Math.ceil(brandList.length/CHUNK)}: [${chunk.join(', ')}]`,'log-info');
-      const data=await callDataLabAPI(chunk);
-      if(data&&data.results){
-        for(const r of data.results){
-          const brand=r.title;
-          const matched=chunk.find(b=>b===brand);
-          if(matched) datalabSeries[matched]=r.data||[];
-        }
-      }
-      setStatus(`데이터랩 조회 중... ${Math.min(i+CHUNK,brandList.length)}/${brandList.length}`,'info');
-      if(i+CHUNK<brandList.length) await new Promise(r=>setTimeout(r,400));
-    }
-    const brandMerged = brandList.map(b=>mergeBrandMonthly(b, searchAdResults[b], datalabSeries[b]));
-    histCache[activeStore] = histCache[activeStore]||{};
-    histCache[activeStore][activeCat] = {brands:brandMerged, fetchedAt:Date.now()};
-    datalabLog(`✅ 데이터랩 조회 완료 · 머지 완료`,'log-ok');
-  }
+  // Summary
+  const climbers = mergedBrands.filter(b => b.rankChange > 0);
+  const newEntries = mergedBrands.filter(b => b.isNew);
+  const bestClimber = climbSorted.find(b => !b.isNew && b.rankChange > 0);
 
-  // ── 3) 현재 월 결과 ──
-  const rows = brandList.map(b=>({
-    name:b,
-    pc: searchAdResults[b]?.pc??null,
-    mo: searchAdResults[b]?.mo??null,
-    total: searchAdResults[b]?.total??0,
-    comp: searchAdResults[b]?.comp??null,
-    matched: !!searchAdResults[b]
-  })).sort((a,b)=>b.total-a.total).slice(0,50);
-  lastResult={store:activeStore,cat:activeCat,rows};
-
-  const matchedCount=rows.filter(r=>r.matched).length;
-  setStatus(`✅ 완료 · ${matchedCount}/${brandList.length}개 매칭${needsHistorical?' · 48개월 데이터 확보':''}`,'ok');
-  switchView();
-  btn.disabled=false;btn.textContent=needsHistorical?"🔍 과거 데이터 포함 조회":"🔍 검색량 조회";
-  document.getElementById('exportBtn').disabled=false;
-}
-
-function setStatus(msg,cls){
-  const bar=document.getElementById('statusBar');
-  bar.classList.add('show');
-  bar.textContent=msg;
-  bar.style.color=cls==='err'?'#dc2626':cls==='ok'?'#16a34a':'#555';
-}
-
-/* ═══════════════════════════════════════════
-   Render results
-   ═══════════════════════════════════════════ */
-function renderResults(){
-  const {store,cat,rows}=lastResult;
-  document.getElementById('resultTitle').textContent=`${store} · ${cat}`;
-  document.getElementById('resultCard').classList.add('show');
-
-  // Summary cards
-  const matched=rows.filter(r=>r.matched);
-  const totalVol=matched.reduce((s,r)=>s+r.total,0);
-  document.getElementById('scBrands').textContent=rows.length;
-  document.getElementById('scMatched').textContent=matched.length;
-  document.getElementById('scTotal').textContent=totalVol.toLocaleString();
-  document.getElementById('scTop').textContent=rows[0]?.name||'—';
-  document.getElementById('scTopVal').textContent=rows[0]?.total?rows[0].total.toLocaleString()+' 검색':'—';
+  document.getElementById('sc1v').textContent = `${prevMonthNum}월 → ${currMonthNum}월`;
+  document.getElementById('sc2v').textContent = bestClimber ? bestClimber.name : '-';
+  document.getElementById('sc2s').textContent = bestClimber ? `+${bestClimber.rankChange}단계 상승` : '';
+  document.getElementById('sc3v').innerHTML = `<span class="climb">${climbers.length}개</span>`;
+  document.getElementById('sc4v').textContent = newEntries.length + '개';
   ['sc1','sc2','sc3','sc4'].forEach(id=>document.getElementById(id).classList.add('show'));
 
-  // Table
-  const max=rows[0]?.total||1;
-  const tbody=document.getElementById('resultBody');
-  tbody.innerHTML=rows.map((r,i)=>{
-    const rnumCls=i===0?'g1':i===1?'g2':i===2?'g3':'';
-    const compCls=r.comp==='낮음'?'comp-low':r.comp==='중간'?'comp-mid':r.comp==='높음'?'comp-high':'';
-    const pct=r.total>0?Math.round(r.total/max*100):0;
-    return `<tr>
-      <td><span class="rnum ${rnumCls}">${i+1}</span></td>
-      <td><span class="brand-nm">${r.name}</span></td>
-      <td class="r naver-col">${r.matched?`<span class="naver-val">${r.pc.toLocaleString()}</span>`:'<span class="na">—</span>'}</td>
-      <td class="r naver-col">${r.matched?`<span class="naver-val">${r.mo.toLocaleString()}</span>`:'<span class="na">—</span>'}</td>
-      <td class="r total-col">${r.matched?`<span class="total-val">${r.total.toLocaleString()}</span>`:'<span class="na">0</span>'}</td>
-      <td class="c"><span class="${compCls}">${r.comp||'—'}</span></td>
-      <td><div class="vol-bar-wrap"><span class="vol-bar" style="width:${pct}%"></span></div></td>
-    </tr>`;
-  }).join("");
+  const ptag = `${prevYear}.${prevMonthNum} → ${currYear}.${currMonthNum}`;
+  document.getElementById('climbPTag').textContent = ptag;
+  document.getElementById('brandPTag').textContent = ptag;
+  document.getElementById('catPTag').textContent = ptag;
+
+  // Render
+  renderPodium(climbSorted.filter(b => b.rankChange > 0 || b.isNew));
+  renderClimbTable(climbSorted);
+  renderBrandTable(mergedBrands);
+  renderCatClimbGrid(mergedCats);
+
+  if(currData.tips?.length){
+    document.getElementById('tipGrid').innerHTML = currData.tips.map(t=>`<div class="tip-item">${t}</div>`).join('');
+    document.getElementById('tipBox').classList.add('show');
+  }
+
+  ['climbWrap','brandWrap','catWrap'].forEach(id=>document.getElementById(id).style.display='block');
+  document.getElementById('podiumSection').style.display='block';
+  document.getElementById('tabNav').style.display='flex';
+  document.getElementById('footerNote').style.display='block';
+
+  sb.textContent=`분석 완료 - ${mergedBrands.length}개 브랜드 / ${mergedCats.length}개 카테고리 순위 변동 비교`;
+  btn.disabled=false;
 }
 
 /* ═══════════════════════════════════════════
-   Historical View Renderers
+   Rank Change Computation
    ═══════════════════════════════════════════ */
-function histRowHTML(brands, valueFn){
-  const list = brands.map(b=>({name:b.name, val:valueFn(b)})).sort((a,b)=>b.val-a.val).slice(0,50);
-  const max = list[0]?.val || 1;
-  return `<table><thead><tr>
-    <th style="width:50px">순위</th><th>브랜드</th><th class="r total-col">검색량</th><th>비중</th>
-    </tr></thead><tbody>${list.map((r,i)=>{
-      const cls=i===0?'g1':i===1?'g2':i===2?'g3':'';
-      const pct=r.val>0?Math.round(r.val/max*100):0;
-      return `<tr>
-        <td><span class="rnum ${cls}">${i+1}</span></td>
-        <td><span class="brand-nm">${r.name}</span></td>
-        <td class="r total-col"><span class="total-val">${r.val.toLocaleString()}</span></td>
-        <td><div class="vol-bar-wrap"><span class="vol-bar" style="width:${pct}%"></span></div></td>
-      </tr>`;
-    }).join('')}</tbody></table>`;
-}
+function computeBrandRankChanges(prevBrands, currBrands){
+  const prevMap = {};
+  prevBrands.forEach(b => { prevMap[b.name] = b; });
 
-function renderCumulative(brands){
-  document.getElementById("histPeriod").textContent="2022.01 – 2025.12 누적";
-  document.getElementById("histBody").innerHTML = histRowHTML(brands, b=>b.total);
-}
-
-function renderCompare(brands){
-  document.getElementById("histPeriod").textContent="연도별 TOP 50 · 전년 대비 순위변동";
-  const yrs=[2022,2023,2024,2025];
-  const rBy = yrs.map((_,yi)=>brands.map(b=>({name:b.name,val:b.yearly[yi]})).sort((a,b)=>b.val-a.val).slice(0,50));
-  const cols = rBy.map((list,yi)=>`
-    <div class="compare-col">
-      <div class="compare-year">${yrs[yi]}</div>
-      ${list.map((b,i)=>{
-        const prevIdx = yi>0 ? rBy[yi-1].findIndex(x=>x.name===b.name) : -1;
-        let d='';
-        if(yi===0) d='<span class="dl flat">·</span>';
-        else if(prevIdx===-1) d='<span class="dl new">NEW</span>';
-        else if(prevIdx>i) d=`<span class="dl up">▲${prevIdx-i}</span>`;
-        else if(prevIdx<i) d=`<span class="dl down">▼${i-prevIdx}</span>`;
-        else d='<span class="dl flat">−</span>';
-        return `<div class="compare-row ${i<3?'top3':''}">
-          <span class="n">${i+1}</span><span class="nm">${b.name}</span>${d}</div>`;
-      }).join('')}
-    </div>`).join('');
-  document.getElementById("histBody").innerHTML = `<div class="compare-grid">${cols}</div>`;
-}
-
-function renderMonthly(brands){
-  document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;
-  const yrs=[2022,2023,2024,2025];
-  const yearTabs = yrs.map(y=>`<button class="sub-tab ${y===activeYear?'active':''}" data-y="${y}">${y}년</button>`).join('');
-  const monthTabs = Array.from({length:12},(_,i)=>`<button class="sub-tab ${i===activeMonth?'active':''}" data-m="${i}">${i+1}월</button>`).join('');
-  const idx = (activeYear-2022)*12 + activeMonth;
-  const table = histRowHTML(brands, b=>b.monthly[idx]||0);
-  document.getElementById("histBody").innerHTML = `
-    <div class="sub-tabs"><span class="lbl">연도</span>${yearTabs}</div>
-    <div class="sub-tabs"><span class="lbl">월</span>${monthTabs}</div>
-    ${table}`;
-  document.querySelectorAll("#histBody [data-y]").forEach(b=>b.onclick=()=>{activeYear=+b.dataset.y;renderMonthly(brands);document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;});
-  document.querySelectorAll("#histBody [data-m]").forEach(b=>b.onclick=()=>{activeMonth=+b.dataset.m;renderMonthly(brands);document.getElementById("histPeriod").textContent=`${activeYear}년 ${activeMonth+1}월 TOP 50`;});
-}
-
-function renderMovers(brands){
-  document.getElementById("histPeriod").textContent="2022 → 2025 순위 변동";
-  const r22 = brands.map(b=>({name:b.name,val:b.yearly[0]})).sort((a,b)=>b.val-a.val);
-  const r25 = brands.map(b=>({name:b.name,val:b.yearly[3]})).sort((a,b)=>b.val-a.val);
-  const rk22={},rk25={};
-  r22.forEach((b,i)=>rk22[b.name]=i+1);
-  r25.forEach((b,i)=>rk25[b.name]=i+1);
-  const moves = brands.map(b=>({name:b.name,r22:rk22[b.name],r25:rk25[b.name],diff:rk22[b.name]-rk25[b.name]}));
-  const risers = [...moves].sort((a,b)=>b.diff-a.diff).slice(0,15);
-  const fallers = [...moves].sort((a,b)=>a.diff-b.diff).slice(0,15);
-  const col = (list,cls,sym)=>list.map(b=>`
-    <div class="mover-row ${cls}">
-      <span class="nm">${b.name}</span>
-      <span class="tr">${b.r22} → ${b.r25}</span>
-      <span class="ch">${sym}${Math.abs(b.diff)}</span>
-    </div>`).join('');
-  document.getElementById("histBody").innerHTML = `
-    <div class="movers-grid">
-      <div class="movers-col up"><h4>▲ 급상승 TOP 15</h4>${col(risers,'up','▲')}</div>
-      <div class="movers-col down"><h4>▼ 급하락 TOP 15</h4>${col(fallers,'down','▼')}</div>
-    </div>`;
-}
-
-/* ═══════════════════════════════════════════
-   CSV Export
-   ═══════════════════════════════════════════ */
-function exportCSV(){
-  if(!lastResult) return;
-  const {store,cat,rows}=lastResult;
-  const header=['순위','브랜드','PC 검색','모바일 검색','총 검색량','경쟁정도'];
-  const lines=[header.join(',')];
-  rows.forEach((r,i)=>{
-    lines.push([i+1,r.name,r.matched?r.pc:0,r.matched?r.mo:0,r.total,r.comp||'-'].join(','));
+  return currBrands.map(curr => {
+    const prev = prevMap[curr.name];
+    const nv = findNaverMatch(curr.name);
+    if(prev){
+      const rankChange = prev.rank - curr.rank; // positive = climbed
+      const volChange = (curr.searchVol||0) - (prev.searchVol||0);
+      const volPct = prev.searchVol ? Math.round(volChange / prev.searchVol * 100) : 0;
+      return {
+        ...curr,
+        prevRank: prev.rank,
+        currRank: curr.rank,
+        rankChange,
+        prevSearchVol: prev.searchVol||0,
+        currSearchVol: curr.searchVol||0,
+        volChange,
+        volPct,
+        isNew: false,
+        naver: nv
+      };
+    } else {
+      return {
+        ...curr,
+        prevRank: null,
+        currRank: curr.rank,
+        rankChange: 0,
+        prevSearchVol: 0,
+        currSearchVol: curr.searchVol||0,
+        volChange: curr.searchVol||0,
+        volPct: 100,
+        isNew: true,
+        naver: nv
+      };
+    }
   });
-  const csv='\ufeff'+lines.join('\n'); // BOM for Excel Korean
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
+}
+
+function computeCatRankChanges(prevCats, currCats){
+  const prevMap = {};
+  prevCats.forEach(c => { prevMap[c.name] = c; });
+
+  return currCats.map(curr => {
+    const prev = prevMap[curr.name];
+    if(prev){
+      const rankChange = prev.rank - curr.rank;
+      const volChange = (curr.searchVol||0) - (prev.searchVol||0);
+      return {
+        ...curr,
+        prevRank: prev.rank,
+        currRank: curr.rank,
+        rankChange,
+        prevSearchVol: prev.searchVol||0,
+        currSearchVol: curr.searchVol||0,
+        volChange,
+        isNew: false
+      };
+    } else {
+      return {
+        ...curr,
+        prevRank: null,
+        currRank: curr.rank,
+        rankChange: 0,
+        prevSearchVol: 0,
+        currSearchVol: curr.searchVol||0,
+        volChange: curr.searchVol||0,
+        isNew: true
+      };
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   Rendering
+   ═══════════════════════════════════════════ */
+function fmt(n){
+  if(!n&&n!==0)return'-';
+  if(n>=10000)return(Math.round(n/1000)/10)+'만';
+  if(n>=1000)return(Math.round(n/100)/10)+'천';
+  return n.toLocaleString();
+}
+function trendHtml(t){
+  if(t==='상승')return'<span class="trend-up">&#9650; 상승</span>';
+  if(t==='하락')return'<span class="trend-down">&#9660; 하락</span>';
+  return'<span class="trend-flat">- 유지</span>';
+}
+function rankChangeHtml(b){
+  if(b.isNew) return '<span class="rank-change rank-new">NEW</span>';
+  if(b.rankChange > 0) return `<span class="rank-change rank-up"><span class="arrow">&#9650;</span>${b.rankChange}</span>`;
+  if(b.rankChange < 0) return `<span class="rank-change rank-down"><span class="arrow">&#9660;</span>${Math.abs(b.rankChange)}</span>`;
+  return '<span class="rank-change rank-same">-</span>';
+}
+
+function findNaverMatch(name){
+  if(naverData[name]) return naverData[name];
+  const lower = name.toLowerCase();
+  if(naverData[lower]) return naverData[lower];
+  const noSpace = name.replace(/\s/g,'');
+  for(const[k,v] of Object.entries(naverData)){
+    if(k.replace(/\s/g,'')===noSpace) return v;
+    if(k.toLowerCase()===lower) return v;
+  }
+  return null;
+}
+
+/* Podium (top 3 climbers) */
+function renderPodium(climbers){
+  const top3 = climbers.slice(0,3);
+  const medals = ['&#129351;','&#129352;','&#129353;']; // gold, silver, bronze
+  const classes = ['p1','p2','p3'];
+
+  document.getElementById('podiumRow').innerHTML = top3.map((b,i) => {
+    const cc = CAT[b.category]||{bg:'#f0f0f0',text:'#888'};
+    const climbText = b.isNew ? 'NEW' : `+${b.rankChange}`;
+    return `<div class="podium-card ${classes[i]}">
+      <div class="podium-medal">${medals[i]}</div>
+      <div class="podium-name">${b.name}</div>
+      <div class="podium-cat"><span class="cat-pill" style="background:${cc.bg};color:${cc.text}">${b.category}</span></div>
+      <div class="podium-climb">${climbText}</div>
+      <div class="podium-detail">
+        ${b.isNew ? '신규 진입' : `${b.prevRank}위 → ${b.currRank}위`}
+        &middot; 검색량 ${fmt(b.currSearchVol)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Climbing table (sorted by rank change) */
+function renderClimbTable(brands){
+  let idx = 0;
+  document.getElementById('climbTbody').innerHTML = brands.map(b => {
+    idx++;
+    const cc = CAT[b.category]||{bar:'#aaa',bg:'#f0f0f0',text:'#888'};
+    const gClass = idx===1?'g1':idx===2?'g2':idx===3?'g3':'';
+    const volChangeHtml = b.volChange > 0
+      ? `<span class="trend-up">+${fmt(b.volChange)}</span>`
+      : b.volChange < 0
+        ? `<span class="trend-down">${fmt(b.volChange)}</span>`
+        : '<span class="trend-flat">-</span>';
+    const nv = b.naver;
+
+    return `<tr data-cat="${b.category}">
+      <td><span class="rnum ${gClass}">${idx}</span></td>
+      <td><div class="brand-nm">${b.name}</div><div class="brand-reason">${b.reason||''}</div></td>
+      <td><span class="cat-pill" style="background:${cc.bg};color:${cc.text}">${b.category}</span></td>
+      <td class="c">${rankChangeHtml(b)}</td>
+      <td class="c">${b.isNew ? '-' : b.prevRank+'위'}</td>
+      <td class="c"><strong>${b.currRank}위</strong></td>
+      <td class="r">${b.isNew ? '-' : fmt(b.prevSearchVol)}</td>
+      <td class="r"><strong>${fmt(b.currSearchVol)}</strong></td>
+      <td class="r">${volChangeHtml}</td>
+      <td class="r naver-col">${nv ? `<span class="naver-val">${fmt(nv.totalSearch)}</span>` : '<span class="naver-na">-</span>'}</td>
+      <td class="c">${trendHtml(b.trend)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* Brand full table */
+function renderBrandTable(brands){
+  document.getElementById('brandTbody').innerHTML = brands.map(b => {
+    const cc = CAT[b.category]||{bar:'#aaa',bg:'#f0f0f0',text:'#888'};
+    const gClass = b.currRank===1?'g1':b.currRank===2?'g2':b.currRank===3?'g3':'';
+    const pctHtml = b.volPct > 0
+      ? `<span class="trend-up">+${b.volPct}%</span>`
+      : b.volPct < 0
+        ? `<span class="trend-down">${b.volPct}%</span>`
+        : '<span class="trend-flat">0%</span>';
+    const nv = b.naver;
+
+    return `<tr data-cat="${b.category}">
+      <td><span class="rnum ${gClass}">${b.currRank}</span></td>
+      <td><div class="brand-nm">${b.name}</div><div class="brand-reason">${b.reason||''}</div></td>
+      <td><span class="cat-pill" style="background:${cc.bg};color:${cc.text}">${b.category}</span></td>
+      <td class="c">${rankChangeHtml(b)}</td>
+      <td class="r">${b.isNew ? '-' : fmt(b.prevSearchVol)}</td>
+      <td class="r"><strong>${fmt(b.currSearchVol)}</strong></td>
+      <td class="r">${pctHtml}</td>
+      <td class="r naver-col">${nv ? `<span class="naver-val">${fmt(nv.pcSearch)}</span>` : '<span class="naver-na">-</span>'}</td>
+      <td class="r naver-col">${nv ? `<span class="naver-val">${fmt(nv.mobileSearch)}</span>` : '<span class="naver-na">-</span>'}</td>
+      <td class="c">${trendHtml(b.trend)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* Category climb grid */
+function renderCatClimbGrid(cats){
+  const sorted = [...cats].sort((a,b) => b.rankChange - a.rankChange);
+  document.getElementById('catClimbGrid').innerHTML = sorted.map((c,i) => {
+    const gClass = i<3 ? `g${i+1}` : '';
+    return `<div class="cat-climb-item">
+      <div class="cat-climb-rank ${gClass}">${i+1}</div>
+      <div class="cat-climb-body">
+        <div class="cat-climb-name">${c.name}</div>
+        <div class="cat-climb-stats">
+          ${c.isNew
+            ? '<span class="stat-chip sc-climb">NEW 진입</span>'
+            : c.rankChange > 0
+              ? `<span class="stat-chip sc-climb">&#9650;${c.rankChange}단계 상승</span>`
+              : c.rankChange < 0
+                ? `<span class="stat-chip" style="background:#fee2e2;color:#dc2626">&#9660;${Math.abs(c.rankChange)}단계 하락</span>`
+                : '<span class="stat-chip sc-prev">- 변동없음</span>'
+          }
+          <span class="stat-chip sc-search">검색량 ${fmt(c.currSearchVol)}</span>
+          <span class="stat-chip sc-prev">${c.isNew ? '' : '이전 '+fmt(c.prevSearchVol)}</span>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px">
+          ${c.isNew ? '신규 진입' : `${c.prevRank}위 → ${c.currRank}위`}
+          ${c.reason ? ' &middot; '+c.reason : ''}
+        </div>
+      </div>
+      <div style="flex-shrink:0">${trendHtml(c.trend)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* Filters & Tabs */
+function filterClimb(cat){
+  document.querySelectorAll('#climbFilters .f-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`#climbFilters .f-tab[data-cat="${cat}"]`).classList.add('active');
+  document.querySelectorAll('#climbTbody tr').forEach(tr=>tr.classList.toggle('hidden',cat!=='전체'&&tr.dataset.cat!==cat));
+}
+function filterBrand(cat){
+  document.querySelectorAll('#brandFilters .f-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`#brandFilters .f-tab[data-cat="${cat}"]`).classList.add('active');
+  document.querySelectorAll('#brandTbody tr').forEach(tr=>tr.classList.toggle('hidden',cat!=='전체'&&tr.dataset.cat!==cat));
+}
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(i===0&&tab==='climbing')||(i===1&&tab==='brand')||(i===2&&tab==='category'));
+  });
+  document.getElementById('panelClimbing').classList.toggle('active',tab==='climbing');
+  document.getElementById('panelBrand').classList.toggle('active',tab==='brand');
+  document.getElementById('panelCategory').classList.toggle('active',tab==='category');
+}
+
+/* CSV Export */
+function exportCSV(){
+  if(!mergedBrands.length) return;
+  let csv='\uFEFF순위변동순위,브랜드,카테고리,순위변동,이전순위,현재순위,이전검색량,현재검색량,검색량변화,증감률,네이버검색량,트렌드,비고\n';
+  const sorted = [...mergedBrands].sort((a,b)=>b.rankChange-a.rankChange);
+  sorted.forEach((b,i)=>{
+    const nv = b.naver;
+    csv+=`${i+1},"${b.name}","${b.category}",${b.isNew?'NEW':b.rankChange>0?'+'+b.rankChange:b.rankChange},${b.isNew?'':b.prevRank},${b.currRank},${b.prevSearchVol},${b.currSearchVol},${b.volChange},${b.volPct}%,${nv?nv.totalSearch:0},"${b.trend}","${b.isNew?'신규진입':b.reason||''}"\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
-  const now=new Date().toISOString().slice(0,10);
-  a.href=url;a.download=`${store}_${cat}_TOP50_${now}.csv`;
+  a.href=URL.createObjectURL(blob);
+  a.download=`순위상승_${prevYear}${String(prevMonthNum).padStart(2,'0')}_vs_${currYear}${String(currMonthNum).padStart(2,'0')}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
 }
 </script>
 </body>
